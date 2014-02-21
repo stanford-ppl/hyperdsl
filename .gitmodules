@@ -1,0 +1,9 @@
+[submodule "virtualization-lms-core"]
+	path = virtualization-lms-core
+	url = git@github.com:TiarkRompf/virtualization-lms-core.git
+[submodule "delite"]
+	path = delite
+	url = git@github.com:stanford-ppl/Delite.git
+[submodule "forge"]
+	path = forge
+	url = git@github.com:stanford-ppl/Forge.git
