@@ -12,6 +12,8 @@ target/
 *src_managed
 project/boot
 project/plugins/project
+build
+published
 generated
 generatedCache
 *.deg
