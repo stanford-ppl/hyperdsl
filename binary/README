@@ -1,0 +1,14 @@
+This directory contains static files used to construct DSL binary tarballs.
+
+The major components are:
+  1) modified versions of delitec/delite/delitecommon for the binary distribution
+  2) an SBT jar to be distributed with the DSL
+  3) a custom SBT project file for the binary distribution
+
+All of the components, as well as the script build-dsl-binaries.sh, are dependent on
+the version of Scala and SBT used in the submodules and DSLs.
+
+If these change, build-dsl-binaries.sh and the files in this directory must be
+updated accordingly! Similarly, if the delite* scripts are substantively changed,
+the versions here must also be updated. We should explore generalizing the scripts
+to avoid this redundancy.

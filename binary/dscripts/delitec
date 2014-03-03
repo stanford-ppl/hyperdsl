@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+import multiprocessing
+import os, sys
+import math
+from socket import gethostname
+from string import *
+import ConfigParser
+from time import localtime, strftime
+
+import delitecommon
+
+def err(s):
+    exit("error: " + s)
+
+def warn(s):
+    print("warn: " + s)
+
+def main():
+    usage = "usage: %prog <application runner> [staging args] [options]"
+    parser = OptionParser(usage)
+    parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="print delitec environment settings")
+    parser.add_option("--nb", dest="no_blas", action="store_true", default=False, help="disable blas calls")
+    parser.add_option("--nf", dest="no_fusion", action="store_true", default=False, help="disables op fusion")
+    parser.add_option("--ns", dest="no_soa", action="store_true", default=False, help="disables soa transform")
+    parser.add_option("--cuda", dest="cuda", action="store_true", default=False, help="enables CUDA generation")
+    parser.add_option("--opencl", dest="opencl", action="store_true", default=False, help="enables OpenCL generation")
+    parser.add_option("--cpp", dest="cpp", action="store_true", default=False, help="enables cpp generation")
+    parser.add_option("-c", "--serializable", dest="cluster", action="store_true", default=False, help="enables serialization and cluster support")
+    parser.add_option("-p", "--profile", dest="profile", action="store_true", default=False, help="enables application profiling")
+    parser.add_option("-O", dest="optimize", action="store", default=0, help="sets advanced optimization level")
+    parser.add_option("--debug", dest="debug", action="store_true", default=False, help="enables verbose compiler output")
+    parser.add_option("--Xdebug", dest="xdebug", action="store_true", default=False, help="enables LMS debug output; for compiler writers only")
+    parser.add_option("--Xnocache", dest="xnocache", action="store_true", default=False, help="disables caching during staging; may reduce memory footprint but decrease code gen performance")
+    parser.add_option("-d", "--dest", action="store", dest="build_dir", default=os.getenv("PWD"), help="output location for generated files")
+    parser.add_option("--dump_exception", dest="dump_exception", action="store_true", default=False, help="Dump generation failed exceptions")
+
+    (opts, args) = parser.parse_args()
+    if len(args) < 1:
+        parser.error("an application file must be passed to delitec as an argument")
+    
+    delitecommon.initialize()
+    stage(args[0], args[1:len(args)], opts)
+ 
+def stage(runner, params, opts):
+    java_opts = os.getenv("JAVA_OPTS", "")
+
+    build_dir = opts.build_dir + "/generated/"
+    java_opts = java_opts + " -server" + " -Ddelite.home.dir=" + delitecommon.DIST_HOME + " -Ddelite.build.dir=" + build_dir + " -Ddelite.deg.filename=" + runner + ".deg"
+    if opts.no_blas == False:
+        java_opts = java_opts + " -Ddelite.extern.blas"
+    if opts.cuda == True:
+        java_opts = java_opts + " -Ddelite.generate.cpp"
+        java_opts = java_opts + " -Ddelite.generate.cuda"
+    if opts.opencl == True:
+        java_opts = java_opts + " -Ddelite.generate.cpp"
+        java_opts = java_opts + " -Ddelite.generate.opencl"
+    if opts.cpp == True:
+        java_opts = java_opts + " -Ddelite.generate.cpp"
+    if opts.cluster == True:
+        java_opts = java_opts + " -Ddelite.generate.serializable"
+    if opts.no_fusion == True:
+        java_opts = java_opts + " -Ddelite.enable.fusion=false"
+    if opts.no_soa == True:
+        java_opts = java_opts + " -Ddelite.enable.soa=false"
+    if opts.profile == True:
+        java_opts = java_opts + " -Ddelite.enable.profiler=true"
+    if opts.optimize > 0:
+        java_opts = java_opts + " -Ddelite.optimize="+str(opts.optimize)
+    if opts.debug == True:
+        java_opts = java_opts + " -Ddelite.debug"
+    if opts.xdebug == True:
+        java_opts = java_opts + " -Dlms.verbosity=1"
+    if opts.xnocache == False:
+        java_opts = java_opts + " -Ddelite.cache.syms"
+    if opts.dump_exception == True:
+        java_opts = java_opts + " -Ddelite.dump.exception"
+    java_opts = java_opts + " -Dnested.variants.level=0"
+    
+    scala_virt_version = delitecommon.scala_virt_version
+    DIST_HOME = delitecommon.DIST_HOME
+    SCALA_VIRT_HOME = delitecommon.SCALA_VIRT_HOME
+    
+    #add classpaths for Delite
+    scala_major_id = delitecommon.scala_major_id
+    old_cp = os.getenv("CLASSPATH", "")
+    cp = " -cp "
+    cp = cp + old_cp + os.pathsep
+   
+    # unmanaged libs
+    cp = cp + DIST_HOME + "/lib/*" + os.pathsep
+    
+    # app cps
+    cp = cp + DIST_HOME + "/target/" + scala_major_id + "/classes" + os.pathsep
+
+    # managed libs 
+    jars = [d + "/" + f for (d, n, fs) in os.walk(DIST_HOME + "/lib_managed/") for f in fs]
+    for j in jars:
+        cp = cp + j + os.pathsep 
+
+    #scala-virt cp
+    cp = cp + SCALA_VIRT_HOME + "/scala-library.jar" + os.pathsep  #TR should use /lib/*.jar?
+    cp = cp + SCALA_VIRT_HOME + "/scala-reflect.jar" + os.pathsep
+    cp = cp + SCALA_VIRT_HOME + "/scala-compiler.jar"
+
+    java_opts = java_opts + cp
+    #os.putenv("JAVA_OPTS", java_opts)
+
+    #MKL ENV
+    os.putenv("LD_PRELOAD", delitecommon.JAVA_HOME + "/jre/lib/amd64/libjsig.so")
+    
+    if opts.verbose:
+       delitecommon.printEnv()
+
+    print "==  Generating DEG file with options: " + str(opts)
+    java_cmd = delitecommon.JAVA_HOME + "/bin/java " + java_opts + " " + runner + " " + ' '.join(params)
+    #print java_cmd
+    ecode = os.system(java_cmd)
+    if ecode != 0:
+        err("Delite compilation failed")
+
+if __name__ == "__main__":
+    main()

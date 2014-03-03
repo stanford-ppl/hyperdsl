@@ -1,0 +1,129 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+import multiprocessing
+import os, sys
+import math
+from socket import gethostname
+from string import *
+from time import localtime, strftime
+
+import delitecommon
+from delitecommon import *
+
+def main():
+    usage = "usage: %prog <application runner> [args] [options]"
+    parser = OptionParser(usage)
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
+    parser.add_option("-t", "--threads", dest="num_threads", default="1", help="num execution threads e.g. 4")
+    parser.add_option("--cpp", dest="num_cpp", default="0", help="number of cpp execution threads")
+    parser.add_option("--cuda", dest="num_cuda", default="0", help="number of cuda execution threads")
+    parser.add_option("--opencl", dest="num_opencl", default="0", help="number of opencl execution threads")
+    parser.add_option("-r", "--runs", dest="num_runs", default="1", type="string", help="the number of times the runtime will execute the applications")
+    parser.add_option("-p", "--profile", dest="profile", action="store_true", default=False, help="enables application profiling")
+    parser.add_option("--executor", dest="executor", default="default", type="string", help="the type of executor")
+    parser.add_option("--scheduler", dest="scheduler", default="default", type="string", help="the type of scheduler")
+    parser.add_option("--noregen", dest="no_regen", action="store_true", default=False, help="Disables regeneration of runtime execution plans")
+    parser.add_option("-n", "--nodes", dest="num_nodes", default=0, help="(maximum) number of cluster nodes")
+    parser.add_option("--isSlave", dest="isSlave", action="store_true", default=False)
+    parser.add_option("-m", "--master", dest="master", default="0.0.0.0:5050", help="master ip address and port for cluster runtime")
+    parser.add_option("--ip", dest="ip_address", default="0.0.0.0", help="override the ip address Delite binds to")
+    parser.add_option("--codecache", dest="codecache", default="", help="directory for runtime code cache")
+    parser.add_option("-d", "--directory", dest="directory", default="", help="change directory to the specified one before running")
+
+    (opts, args) = parser.parse_args()
+    if len(args) < 1:
+        parser.error("a DEG file is required as an argument")
+
+    delitecommon.initialize()
+    run(args[0], args[1:len(args)], opts)
+ 
+def parseBuildDir(deg):
+    if not os.path.isfile(deg):
+        err("couldn't find DEG file " + deg)
+
+    with open(deg) as f:
+      head = [f.next() for x in xrange(3)]
+    
+    fields = ''.join(head).split(",")
+    kernelpath = fields[len(fields)-2].split(":") 
+    build_dir = kernelpath[len(kernelpath)-1]
+    if (build_dir.strip('\n') == ""):
+      err("DEG file " + deg + " appears to be invalid; could not parse kernelpath")
+
+    return build_dir
+
+def run(deg, params, opts):
+    java_opts = os.getenv("JAVA_OPTS", "")
+
+    if not os.path.isfile(deg):
+      if not (os.path.isfile(deg + ".deg")):
+        err("couldn't find DEG file: " + deg)
+      else:
+        deg = deg + ".deg"
+
+    build_dir = parseBuildDir(deg)
+    ld_library_path = filter(len, os.getenv("LD_LIBRARY_PATH", "").split(":"))
+    ld_library_path.append(build_dir+os.sep+"libraries") 
+    os.putenv("LD_LIBRARY_PATH", ":".join(ld_library_path))
+    
+    if opts.num_nodes > 0 or opts.isSlave:
+        #MESOS_LIB = delitecommon.MESOS_HOME + os.sep+"src"+os.sep+".libs"
+        #ld_library_path.append(MESOS_LIB)
+        if delitecommon.MESOS_NATIVE_LIBRARY is None:
+            err("MESOS_NATIVE_LIBRARY must be set in the environment or included in delite.properties")
+        else:
+            os.putenv("MESOS_NATIVE_LIBRARY", delitecommon.MESOS_NATIVE_LIBRARY)
+            os.putenv("LIBPROCESS_IP", opts.ip_address)
+
+    if opts.codecache == "":
+        opts.codecache = delitecommon.DIST_HOME + os.sep + "generatedCache"
+
+    java_opts = java_opts + " -Ddelite.home=" + delitecommon.DIST_HOME + " -Ddelite.threads=" + str(opts.num_threads) + " -Ddelite.cpp=" + opts.num_cpp + " -Ddelite.cuda=" + opts.num_cuda + " -Ddelite.opencl=" + opts.num_opencl + " -Ddelite.runs=" + opts.num_runs + " -Ddelite.executor=" + opts.executor + " -Ddelite.scheduler=" + opts.scheduler + " -Ddelite.master=" + opts.master + " -Ddelite.slaves=" + str(opts.num_nodes) + " -Ddelite.code.cache.home=" + opts.codecache
+
+    if opts.no_regen == True:
+        java_opts = java_opts + " -Ddelite.debug.noregenerate"
+    if opts.profile == True:
+        java_opts = java_opts + " -Dprofile.output.dir=profile -Dprofile.dump=true -Ddelite.debug.profile=true"
+    if opts.isSlave == True:
+        java_opts = java_opts + " -Ddelite.cluster.isSlave"
+    if delitecommon.DELITE_MEM != None:
+        java_opts = java_opts + " -Xmx" + delitecommon.DELITE_MEM
+
+
+    # add classpaths
+    cp = " -cp "
+    cp = cp + delitecommon.DIST_HOME + "/lib/*" + os.pathsep
+
+    # managed libs 
+    jars = [d + "/" + f for (d, n, fs) in os.walk(delitecommon.DIST_HOME + "/lib_managed/") for f in fs]
+    for j in jars:
+        cp = cp + j + os.pathsep
+
+    # needed by deliszt
+    bootcp = " -Xbootclasspath/a:"
+    bootcp = bootcp + delitecommon.DIST_HOME + "/unsafe_classes/unsafe.jar"
+
+    java_opts = java_opts + cp + bootcp
+    #os.putenv("JAVA_OPTS", java_opts)
+
+    #MKL ENV
+    os.putenv("LD_PRELOAD", delitecommon.JAVA_HOME + "/jre/lib/amd64/libjsig.so")
+    os.putenv("OMP_NUM_THREADS", str(opts.num_threads))
+    
+    if opts.verbose:
+        delitecommon.printEnv()
+
+    print "== executing application: " + deg + " " + ' '.join(params)
+    if opts.verbose: 
+        print "== with options: " + java_opts + "\n" 
+    java_cmd = delitecommon.JAVA_HOME + "/bin/java " + java_opts + " ppl.delite.runtime.Delite " + deg + " " + ' '.join(params)
+    #print java_cmd
+    if opts.directory != "":
+        os.chdir(opts.directory)
+    ecode = os.system(java_cmd)
+    if ecode != 0:
+        err("Delite execution failed")
+
+if __name__ == "__main__":
+    main()
