@@ -13,13 +13,11 @@ set -e
 
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
-export JAVA_OPTS="-Dtests.threads=1"
-sbt "; project tests; test"
+sbt -Dtests.threads=1 "; project tests; test"
 
 # and again multi-threaded
 echo "[test-all]: running Delite and Delite DSL tests (8 threads)"
-export JAVA_OPTS="-Dtests.threads=8"
-sbt "; project tests; test"
+sbt -Dtests.threads=8 "; project tests; test"
 
 # all Forge DSL tests
 echo "[test-all]: running Forge DSL tests"
@@ -32,11 +30,9 @@ do
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
     echo "[test-all]: running $dsl tests (1 thread)"
-    export JAVA_OPTS="-Dtests.threads=1"
-    sbt "; project $dsl-tests; test"
+    sbt -Dtests.threads=1 "; project $dsl-tests; test"
     echo "[test-all]: running $dsl tests (8 threads)"
-    export JAVA_OPTS="-Dtests.threads=8"
-    sbt "; project $dsl-tests; test"
+    sbt -Dtests.threads=8 "; project $dsl-tests; test"
  done
 
 popd 
