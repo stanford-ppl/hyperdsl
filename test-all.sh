@@ -12,17 +12,14 @@ runners=( "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" )
 set -e
 
 # all non-Forge tests
-echo "[test-all]: running Delite and Delite DSL tests"
-sbt "; project tests; test"
+echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
+sbt -Dtests.threads=1 "; project tests; test"
+
+# and again multi-threaded
+echo "[test-all]: running Delite and Delite DSL tests (8 threads)"
+sbt -Dtests.threads=8 "; project tests; test"
 
 # all Forge DSL tests
-FORGE_BIN="$PWD/forge/bin/"
-
-# update user path if hyperdsl Forge is not already there
-if [[ ":$PATH:" == *":$FORGE_BIN:"* ]]; then
-  export PATH=$FORGE_BIN:$PATH
-fi
-
 echo "[test-all]: running Forge DSL tests"
 
 pushd .
@@ -30,9 +27,12 @@ pushd .
 for i in `seq 0 $((${#dsls[@]}-1))` 
 do  
     dsl=${dsls[$i]} 
-    update ${runners[$i]} $dsl 
+    $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
-    sbt "; project $dsl-tests; test"
+    echo "[test-all]: running $dsl tests (1 thread)"
+    sbt -Dtests.threads=1 "; project $dsl-tests; test"
+    echo "[test-all]: running $dsl tests (8 threads)"
+    sbt -Dtests.threads=8 "; project $dsl-tests; test"
  done
 
 popd 
