@@ -14,7 +14,7 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
   val scalaTestCompile = "org.scalatest" % "scalatest_2.10" % "2.0.M5b"
   val scalaTest = scalaTestCompile % "test"
 
-  val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.2-RC2")
+  val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.2-RC1")
   val virtBuildSettingsBase = Defaults.defaultSettings ++ Seq(
     //resolvers := Seq(mavenLocal, prereleaseScalaTest, Resolver.sonatypeRepo("snapshots"), Resolver.sonatypeRepo("releases")),
     organization := "stanford-ppl",
