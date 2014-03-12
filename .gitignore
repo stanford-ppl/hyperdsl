@@ -16,6 +16,7 @@ build
 published
 generated
 generatedCache
+nightlies
 *.deg
 *.debug
 *.pgm

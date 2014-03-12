@@ -10,12 +10,6 @@ runners=( "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" )
 # exit if any part of the script fails
 set -e
 
-# update user path if hyperdsl Forge is not already there
-FORGE_BIN=$FORGE_HOME/bin/
-if [[ ":$PATH:" == *":$FORGE_BIN:"* ]]; then
-  export PATH=$FORGE_BIN:$PATH
-fi
-
 # first we need to publish-local LMS, runtime, framework and delite-test
 echo "[build binary]: publishing dependencies"
 sbt "; project lms; publish-local; project runtime; publish-local; project framework; publish-local; project delite-test; publish-local"
@@ -41,7 +35,7 @@ do
     then
         rm -r $src/project/
     fi
-    update -j ${runners[$i]} $dsl 
+    $FORGE_HOME/bin/update -j ${runners[$i]} $dsl 
 
     cd $src
     sbt "; project $dsl-shared; publish-local; project $dsl-lib; publish-local; project $dsl-comp; publish-local"
