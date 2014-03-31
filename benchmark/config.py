@@ -47,6 +47,7 @@ class Config(object):
     return Config("gpu", "-t 1 --gpu")
 
 OptiML = Dsl("OptiML")
+Delite = Dsl("Delite", "delite", "", False)
 
 dsls = [OptiML]
 
@@ -54,7 +55,9 @@ configs = [ Config.smp(1), Config.smp(4), Config.smp(16) ]
 
 apps = [
   App(OptiML, "LogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs),
-  App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
-    runner_class="NBCompiler"),
-  App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/q1x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
+  #App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
+  #  runner_class="NBCompiler"),
+  #App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/q1x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs),
+  App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs, 
+    runner_class="LogRegRunner")
 ]
