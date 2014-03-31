@@ -60,11 +60,12 @@ def main():
   subprocess.check_call("mkdir -p benchmark/times/{0}".format(git_hash), shell=True)
 
   if(args.verbose):
-    print("notice: compiling dsls", file=sys.stderr)
+    print("notice: publishing forge dsls", file=sys.stderr)
   for dsl in config.dsls:
-    if(args.verbose):
-      print("notice: compiling {0}".format(dsl.name), file=sys.stderr)
-    subprocess.check_call(dsl.update_command(), stdout=sys.stderr, stderr=sys.stderr, shell=True)
+    if dsl.needs_publish:
+      if(args.verbose):
+        print("notice: publishing {0}".format(dsl.name), file=sys.stderr)
+      subprocess.check_call(dsl.publish_command, stdout=sys.stderr, stderr=sys.stderr, shell=True)
 
   delite_options = "-r {0}".format(args.runs)
   if(args.verbose):
@@ -75,7 +76,7 @@ def main():
   for app in config.apps:
     if(args.verbose):
       print("notice: staging {0}".format(app.name), file=sys.stderr)
-    os.chdir("published/" + app.dsl.name)
+    os.chdir(app.dsl.run_dir)
     subprocess.check_call(app.stage_command(), stdout=sys.stderr, stderr=sys.stderr, shell=True)
     for c in app.configs:
       if(args.verbose):
