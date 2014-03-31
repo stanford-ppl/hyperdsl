@@ -9,7 +9,7 @@ class Dsl(object):
     else:
       self.publish_command = publish_command
     if(run_dir == None):
-      self.run_dir = "published/" + app.dsl.name
+      self.run_dir = "published/" + name
     else:
       self.run_dir = run_dir
     self.needs_publish = needs_publish
