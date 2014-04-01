@@ -127,6 +127,18 @@ def main():
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
+  for aa in config.app_comparison_plots:
+    vc_plot = {}
+    vc_plot["title"] = "{0} Performance Comparison".format("/".join(a.name for a in aa))
+    vc_plot["data"] = []
+    for c in app.configs:
+      cc_data = {}
+      cc_data["Configuration"] = c.name
+      for a in aa:
+        cc_data[a.name] = "{0:.4f}".format(report_data[0][a.name + "/" + c.name])
+      vc_plot["data"].append(cc_data)
+    plot_data.append(vc_plot)
+
   # write out the report
   with open("benchmark/times/{0}/report.html".format(git_hash), "w") as freport:
     # write the report head
@@ -172,8 +184,7 @@ report_head = """<!DOCTYPE html>
   <script src="http://arsenalfc.stanford.edu/kogroup/benchmark/d3-tip.js"></script>
   <script src="http://arsenalfc.stanford.edu/kogroup/benchmark/benchmark.js"></script>
 </head>
-<body>
-"""
+<body>"""
 
 
 if __name__ == "__main__":

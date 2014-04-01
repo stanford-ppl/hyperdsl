@@ -47,9 +47,9 @@ class Config(object):
     return Config("gpu", "-t 1 --gpu")
 
 OptiML = Dsl("OptiML")
-Delite = Dsl("Delite", "delite", "", False)
+Delite = Dsl("Delite", "delite", "sbt \"; project optiml-apps; compile\"")
 
-dsls = [OptiML]
+dsls = [OptiML, Delite]
 
 configs = [ Config.smp(1), Config.smp(2), Config.smp(4), Config.smp(8) ]
 
@@ -61,6 +61,8 @@ delite_logreg = App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1
   runner_class="ppl.apps.ml.logreg.LogRegRunner")
 
 
-apps = [ logreg, naivebayes, gda ]
+apps = [ logreg, naivebayes, gda, delite_logreg ]
+
+app_comparison_plots = [ [logreg, delite_logreg] ]
 
 
