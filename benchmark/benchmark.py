@@ -118,13 +118,13 @@ def main():
   for app in config.apps:
     vc_plot = {}
     vc_plot["title"] = "{0}/{1} Performance Comparison".format(app.dsl.name, app.name)
-    vc_data["data"] = []
+    vc_plot["data"] = []
     for c in app.configs:
       cc_data = {}
       cc_data["Configuration"] = c.name
       for (h, d) in zip(report_hashes, report_data):
         cc_data[h] = "{0:.4f}".format(d[app.name + "/" + c.name])
-      vc_data["data"].append(cc_data)
+      vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
   # write out the report
