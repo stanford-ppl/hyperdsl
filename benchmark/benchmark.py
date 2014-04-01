@@ -136,7 +136,7 @@ def main():
     print("  <p>Plots generated at {0}.</p>".format(time.strftime("%c")), file=freport)
     # write out the plots
     print("  <script>", file=freport)
-    print("    document.plotData = " + json.dumps("plot_data") + ";", file=freport)
+    print("    document.plotData = " + json.dumps(plot_data) + ";", file=freport)
     print("  </script>", file=freport)
     # and close the tags
     print("</body>", file=freport)
