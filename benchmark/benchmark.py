@@ -6,6 +6,7 @@ import os
 import argparse
 import subprocess
 import time
+import json
 
 import config
 
@@ -112,6 +113,20 @@ def main():
   # load data for all hashes
   report_data = [loadData(h, args.verbose) for h in report_hashes]
 
+  # generate the plots
+  plot_data = []
+  for app in config.apps:
+    vc_plot = {}
+    vc_plot["title"] = "{0}/{1} Performance Comparison".format(app.dsl.name, app.name)
+    vc_data["data"] = []
+    for c in app.configs:
+      cc_data = {}
+      cc_data["Configuration"] = c.name
+      for (h, d) in zip(report_hashes, report_data):
+        cc_data[h] = "{0:.4f}".format(d[app.name + "/" + c.name])
+      vc_data["data"].append(cc_data)
+    plot_data.append(vc_plot)
+
   # write out the report
   with open("benchmark/times/{0}/report.html".format(git_hash), "w") as freport:
     # write the report head
@@ -119,17 +134,9 @@ def main():
     # write the report title
     print("  <h1>Performance Comparison for Commit [{0}]</h1>".format(git_hash), file=freport)
     print("  <p>Plots generated at {0}.</p>".format(time.strftime("%c")), file=freport)
-    # start writing out the plots
+    # write out the plots
     print("  <script>", file=freport)
-    for app in config.apps:
-      print("    makePerformancePlot([", file=freport)
-      for c in app.configs:
-        rs = "      {{ \"Configuration\": \"{0}\", ".format(c.name)
-        rs += ", ".join("\"{0}\": \"{1:.4f}\"".format(h, v[app.name + "/" + c.name]) for (h, v) in zip(report_hashes, report_data))
-        rs += " },"
-        print(rs, file=freport)
-      print("    ], \"{0}/{1} Performance Comparison\");".format(app.dsl.name, app.name), file=freport)
-    #finish the plots
+    print("    document.plotData = " + json.dumps("plot_data") + ";", file=freport)
     print("  </script>", file=freport)
     # and close the tags
     print("</body>", file=freport)
@@ -160,162 +167,10 @@ report_head = """<!DOCTYPE html>
 <head>
   <title>[{0}] Performance Comparison</title>
   <meta charset="utf-8">
-  <style>
-    body {{
-      font: 10pt sans-serif;
-    }}
-
-    .axis path,
-    .axis line {{
-      fill: none;
-      stroke: #000;
-      shape-rendering: crispEdges;
-    }}
-
-    .d3-tip {{
-      line-height: 1;
-      font-weight: bold;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      border-radius: 2px;
-    }}
-
-    /* Creates a small triangle extender for the tooltip */
-    .d3-tip:after {{
-      box-sizing: border-box;
-      display: inline;
-      font-size: 10px;
-      width: 100%;
-      line-height: 1;
-      color: rgba(0, 0, 0, 0.8);
-      content: "\\25BC";
-      position: absolute;
-      text-align: center;
-    }}
-
-    /* Style northward tooltips differently */
-    .d3-tip.n:after {{
-      margin: -1px 0 0 0;
-      top: 100%;
-      left: 0;
-    }}
-  </style>
+  <link rel="stylesheet" href="http://arsenalfc.stanford.edu/kogroup/benchmark/benchmark.css">
   <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="d3-tip.js"></script>
-  <script>
-    function makePerformancePlot(data, title) {{
-
-      var margin = {{top: 40, right: 20, bottom: 30, left: 40}},
-          width = 500 - margin.left - margin.right,
-          height = 300 - margin.top - margin.bottom;
-
-      var x0 = d3.scale.ordinal()
-          .rangeRoundBands([0, width], .1);
-
-      var x1 = d3.scale.ordinal();
-
-      var y = d3.scale.linear()
-          .range([height, 0]);
-
-      var color = d3.scale.category10();
-
-      var xAxis = d3.svg.axis()
-          .scale(x0)
-          .orient("bottom");
-
-      var yAxis = d3.svg.axis()
-          .scale(y)
-          .orient("left")
-          .tickFormat(d3.format(".2s"));
-
-      var svg = d3.select("body").append("p")
-        .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      var series = d3.keys(data[0]).filter(function(key) {{ return key !== "Configuration"; }});
-
-      data.forEach(function(d) {{
-        d.ages = series.map(function(name) {{ return {{name: name, value: +d[name]}}; }});
-      }});
-
-      x0.domain(data.map(function(d) {{ return d.Configuration; }}));
-      x1.domain(series).rangeRoundBands([0, x0.rangeBand()]);
-      y.domain([0, d3.max(data, function(d) {{ return d3.max(d.ages, function(d) {{ return d.value; }}); }})]);
-
-      var tip = d3.tip()
-        .attr('class', 'd3-tip')
-        .offset([-10, 0])
-        .html(function(d) {{
-          return "<strong>Time:</strong> " + d.value + " s";
-        }});
-
-      svg.call(tip);
-
-      svg.append("g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
-
-      svg.append("g")
-          .attr("class", "y axis")
-          .call(yAxis)
-        .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", ".71em")
-          .style("text-anchor", "end")
-          .text("run time (s)");
-
-      var configuration = svg.selectAll(".configuration")
-          .data(data)
-        .enter().append("g")
-          .attr("class", "g")
-          .attr("transform", function(d) {{ return "translate(" + x0(d.Configuration) + ",0)"; }});
-
-      configuration.selectAll("rect")
-          .data(function(d) {{ return d.ages; }})
-        .enter().append("rect")
-          .attr("width", x1.rangeBand())
-          .attr("x", function(d) {{ return x1(d.name); }})
-          .attr("y", function(d) {{ return y(d.value); }})
-          .attr("height", function(d) {{ return height - y(d.value); }})
-          .style("fill", function(d) {{ return color(d.name); }})
-          .on("mouseover", tip.show)
-          .on("mouseout", tip.hide);
-
-      svg.append("text")
-          .attr("x", (width / 2))             
-          .attr("y", 0 - (margin.top / 2))
-          .attr("text-anchor", "middle")  
-          .style("font-size", "16px") 
-          .style("text-decoration", "underline")  
-          .text(title);
-
-      var legend = svg.selectAll(".legend")
-          .data(series.slice())
-        .enter().append("g")
-          .attr("class", "legend")
-          .attr("transform", function(d, i) {{ return "translate(0," + i * 20 + ")"; }});
-
-      legend.append("rect")
-          .attr("x", width - 18)
-          .attr("width", 18)
-          .attr("height", 18)
-          .style("fill", color)
-          .style("stroke", "black");
-
-      legend.append("text")
-          .attr("x", width - 24)
-          .attr("y", 9)
-          .attr("dy", ".35em")
-          .style("text-anchor", "end")
-          .text(function(d) {{ return d; }});
-    }}
-  </script>
+  <script src="http://arsenalfc.stanford.edu/kogroup/benchmark/d3-tip.js"></script>
+  <script src="http://arsenalfc.stanford.edu/kogroup/benchmark/benchmark.js"></script>
 </head>
 <body>
 """
