@@ -5,8 +5,8 @@
 # Used by Jenkins to verify commits.
 
 # add new DSLs to test here
-dsls=( "OptiML" )
-runners=( "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" )
+dsls=( "SimpleVector" "OptiML" )
+runners=( "ppl.dsl.forge.examples.SimpleVectorDSLRunner" "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" )
 
 # exit if any part of the script fails
 set -e
@@ -22,10 +22,9 @@ sbt -Dtests.threads=8 "; project tests; test"
 # all Forge DSL tests
 echo "[test-all]: running Forge DSL tests"
 
-pushd .
-
 for i in `seq 0 $((${#dsls[@]}-1))` 
 do  
+    pushd .
     dsl=${dsls[$i]} 
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
@@ -33,8 +32,7 @@ do
     sbt -Dtests.threads=1 "; project $dsl-tests; test"
     echo "[test-all]: running $dsl tests (8 threads)"
     sbt -Dtests.threads=8 "; project $dsl-tests; test"
+    popd
  done
-
-popd 
 
 echo "[test-all]: All tests finished!"
