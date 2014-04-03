@@ -47,7 +47,7 @@ class Config(object):
     return Config("gpu", "-t 1 --gpu")
 
 OptiML = Dsl("OptiML")
-Delite = Dsl("Delite", "delite", "sbt \"; project optiml-apps; compile\"")
+Delite = Dsl("Delite", "delite", "cd delite; sbt update; cd ..; sbt \"; project optiml-apps; compile\"")
 
 dsls = [OptiML, Delite]
 
@@ -59,10 +59,11 @@ naivebayes = App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAI
 gda = App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/q1x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
 delite_logreg = App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs, 
   runner_class="ppl.apps.ml.logreg.LogRegRunner")
+delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
+  runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
+apps = [ naivebayes, delite_naivebayes ]
 
-apps = [ logreg, naivebayes, gda, delite_logreg ]
-
-app_comparison_plots = [ [logreg, delite_logreg] ]
+app_comparison_plots = [ [naivebayes, delite_naivebayes] ]
 
 
