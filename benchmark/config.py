@@ -59,7 +59,7 @@ naivebayes = App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAI
 gda = App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/q1x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
 delite_logreg = App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs, 
   runner_class="ppl.apps.ml.logreg.LogRegRunner")
-delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
+delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.50k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
 apps = [ naivebayes, delite_naivebayes ]
