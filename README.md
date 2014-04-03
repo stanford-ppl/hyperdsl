@@ -5,7 +5,9 @@ This is a repository containing all of the latest code dependencies for the Deli
 Three repositories are submodules in this framework.  See each individual repository for further detail:
 
 1) Forge: https://github.com/stanford-ppl/Forge
+
 2) Delite: https://github.com/stanford-ppl/Delite
+
 3) LMS: https://github.com/TiarkRompf/virtualization-lms-core
 
 Installation
