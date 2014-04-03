@@ -78,14 +78,14 @@ def main():
     if(args.verbose):
       print("notice: staging {0}".format(app.name), file=sys.stderr)
     os.chdir(app.dsl.run_dir)
-    subprocess.check_call(app.stage_command(), stdout=sys.stderr, stderr=sys.stderr, shell=True)
+    subprocess.check(app.stage_command(), stdout=sys.stderr, stderr=sys.stderr, shell=True)
     for c in app.configs:
       if(args.verbose):
         print("notice: running {0} under configuration {1}".format(app.name, c.name))
       opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0} -Dstats.output.filename={1}-{2}.times {3}".format(
         hyperdsl_root + "/benchmark/times/" + git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
-      subprocess.check_call(app.run_command(c, delite_options), stdout=sys.stderr, stderr=sys.stderr, shell=True)
+      subprocess.check(app.run_command(c, delite_options), stdout=sys.stderr, stderr=sys.stderr, shell=True)
     os.chdir(hyperdsl_root)
 
   if(args.skip_report):
