@@ -47,7 +47,7 @@ class Config(object):
     return Config("gpu", "-t 1 --gpu")
 
 OptiML = Dsl("OptiML")
-OptiML = Dsl("OptiQL")
+OptiQL = Dsl("OptiQL")
 Delite = Dsl("Delite", "delite", "cd delite; sbt update; cd ..; sbt \"; project optiml-apps; compile\"")
 
 dsls = [OptiML, Delite]
