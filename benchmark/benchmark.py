@@ -129,7 +129,7 @@ def main():
 
   for aa in config.app_comparison_plots:
     vc_plot = {}
-    vc_plot["title"] = "{0} Performance Comparison".format("/".join(a.name for a in aa))
+    vc_plot["title"] = "{0} Performance Comparison".format(" vs ".join(a.name for a in aa))
     vc_plot["data"] = []
     for c in app.configs:
       cc_data = {}
