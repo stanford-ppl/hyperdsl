@@ -70,7 +70,7 @@ delite_logreg = App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1
 delite_kmeans = App(Delite, "DelitekMeans", "/kunle/ppl/delite/data/ml/kmeans/mandrill-xlarge.dat /kunle/ppl/delite/data/ml/kmeans/initmu.dat", configs,
   runner_class="ppl.apps.ml.kmeans.kmeansRunner")
 delite_rbm = App(Delite, "DeliteRBM", "/kunle/ppl/delite/data/ml/rbm/mnist2000x10.dat 2000 2000", configs,
-  runner_class="ppl.apps.ml.rbm.RBMRunner", delitec_options="--nb")
+  runner_class="ppl.apps.ml.rbm.RBMRunner")
 delite_svm = App(Delite, "DeliteSVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAIN.400 /kunle/ppl/delite/data/ml/svm/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.svm.SVMRunner")
 delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.50k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
