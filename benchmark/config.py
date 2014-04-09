@@ -31,7 +31,7 @@ class App(object):
     return "bin/delitec %s %s" % (self.delitec_options, self.runner_class)
 
   def run_command(self, c, extra_options):
-    return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, self.args)
+    return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, "") #self.args)
 
 class Config(object):
   def __init__(self, name, delite_options):
