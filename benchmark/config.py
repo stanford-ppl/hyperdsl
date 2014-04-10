@@ -48,7 +48,7 @@ class Config(object):
 
 OptiML = Dsl("OptiML")
 OptiQL = Dsl("OptiQL")
-Delite = Dsl("Delite", "delite", "cd delite; rm -rf lib_managed; cp -r ../lib_managed .; cd ..")
+Delite = Dsl("Delite", "delite", "sbt \"; project optiml-apps; compile\"; rm -rf delite/lib_managed; cp -r lib_managed delite")
 
 dsls = [OptiML, Delite]
 
