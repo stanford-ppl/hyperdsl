@@ -48,7 +48,7 @@ class Config(object):
 
 OptiML = Dsl("OptiML")
 OptiQL = Dsl("OptiQL")
-Delite = Dsl("Delite", "delite", "cd delite; sbt update; cd ..; sbt \"; project optiml-apps; compile\"")
+Delite = Dsl("Delite", "delite", "cd delite; rm -rf lib_managed; cp -r ../lib_managed .; cd ..")
 
 dsls = [OptiML, Delite]
 
@@ -77,10 +77,10 @@ delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/n
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
 apps = [ gda, logreg, kmeans, rbm, svm, naivebayes, 
-  delite_logreg, delite_kmeans, delite_rbm, delite_svm, delite_naivebayes ]
+  delite_gda, delite_logreg, delite_kmeans, delite_rbm, delite_svm, delite_naivebayes ]
 
 app_comparison_plots = [
-  #[gda, delite_gda],
+  [gda, delite_gda],
   [logreg, delite_logreg],
   [kmeans, delite_kmeans],
   [rbm, delite_rbm],
