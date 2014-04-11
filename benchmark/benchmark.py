@@ -78,7 +78,7 @@ def main():
     if(args.verbose):
       print("notice: staging {0}".format(app.name), file=sys.stderr)
     os.chdir(app.dsl.run_dir)
-    subprocess.check_call(app.stage_command(), 
+    subprocess.call(app.stage_command(), 
       stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}.delitec.out".format(git_hash, app.name), "w"), 
       stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}.delitec.err".format(git_hash, app.name), "w"), 
       shell=True)
@@ -88,7 +88,7 @@ def main():
       opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0} -Dstats.output.filename={1}-{2}.times {3}".format(
         hyperdsl_root + "/benchmark/times/" + git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
-      subprocess.check_call(app.run_command(c, delite_options), 
+      subprocess.call(app.run_command(c, delite_options), 
         stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}-{2}.delite.out".format(git_hash, app.name, c.name), "w"), 
         stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}-{2}.delite.err".format(git_hash, app.name, c.name), "w"), 
         shell=True)
