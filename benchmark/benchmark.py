@@ -58,7 +58,9 @@ def main():
 
   if(args.verbose):
     print("notice: creating directory for experimental results", file=sys.stderr)
+  subprocess.check_call("rm -f benchmark/times/latest", shell=True)
   subprocess.check_call("mkdir -p benchmark/times/{0}".format(git_hash), shell=True)
+  subprocess.check_call("ln -s benchmark/times/{0} benchmark/times/latest".format(git_hash), shell=True)
 
   if(args.verbose):
     print("notice: publishing forge dsls", file=sys.stderr)
