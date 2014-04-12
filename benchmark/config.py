@@ -31,7 +31,7 @@ class App(object):
     return "bin/delitec %s %s" % (self.delitec_options, self.runner_class)
 
   def run_command(self, c, extra_options):
-    return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, "") # self.args)
+    return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, self.args)
 
 class Config(object):
   def __init__(self, name, delite_options):
@@ -76,13 +76,13 @@ delite_svm = App(Delite, "DeliteSVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAI
 delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.50k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
-apps = [ gda, logreg, kmeans, rbm, svm, naivebayes, 
+apps = [ gda, logreg, rbm, svm, naivebayes, 
   delite_gda, delite_logreg, delite_kmeans, delite_rbm, delite_svm, delite_naivebayes ]
 
 app_comparison_plots = [
   [gda, delite_gda],
   [logreg, delite_logreg],
-  [kmeans, delite_kmeans],
+  #[kmeans, delite_kmeans],
   [rbm, delite_rbm],
   [svm, delite_svm],
   [naivebayes, delite_naivebayes]
