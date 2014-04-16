@@ -76,7 +76,7 @@ delite_svm = App(Delite, "DeliteSVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAI
 delite_naivebayes = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.50k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
-apps = [ gda, logreg, rbm, svm, naivebayes, 
+apps = [ gda, logreg, kmeans, rbm, svm, naivebayes, 
   delite_gda, delite_logreg, delite_kmeans, delite_rbm, delite_svm, delite_naivebayes ]
 
 app_comparison_plots = [
