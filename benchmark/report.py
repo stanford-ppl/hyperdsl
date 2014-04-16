@@ -81,6 +81,8 @@ def main():
     if(args.verbose):
       print("notice: ran out of previous hashes", file=sys.stderr)
 
+  git_hash = report_hashes[0]
+
   # load data for all hashes
   report_data = [loadData(h, apps, args.verbose) for h in report_hashes]
 
@@ -111,7 +113,7 @@ def main():
     plot_data.append(vc_plot)
 
   # write out the report
-  with open("benchmark/times/latest/report.html".format(git_hash), "w") as freport:
+  with open("benchmark/times/{0}/report.html".format(git_hash), "w") as freport:
     # write the report head
     print(report_head.format(git_hash), file=freport)
     # write the report title
