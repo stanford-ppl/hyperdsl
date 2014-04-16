@@ -30,12 +30,12 @@ def main():
   args = parser.parse_args()
 
   # collect the apps to analyze
-  ac_apps_arg = args.app_comparison
-  if (args.app_comparison_default):
-    ac_apps_arg = config.default_apps
   vc_apps_arg = args.ver_comparison
   if (args.ver_comparison_default):
-    vc_apps_arg = config.default_comparison_plots
+    vc_apps_arg = config.default_apps
+  ac_apps_arg = args.app_comparison
+  if (args.app_comparison_default):
+    ac_apps_arg = config.default_comparison_plots
   vc_apps = []
   for a in vc_apps_arg:
     if(a not in config.apps):
