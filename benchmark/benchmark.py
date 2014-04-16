@@ -40,7 +40,7 @@ def main():
       print("notice: identified app {0}".format(app.name))
 
   # chdir to the hyperdsl root directory
-  util.chdir_hyperdsl_root()
+  hyperdsl_root = util.chdir_hyperdsl_root()
 
   # check that there are no changes to the repository
   git_status = subprocess.check_output("git status -s", shell=True)
