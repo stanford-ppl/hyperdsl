@@ -91,10 +91,11 @@ def main():
   for app in vc_apps:
     vc_plot = {}
     vc_plot["title"] = "{0}/{1} Performance Comparison".format(app.dsl.name, app.name)
+    vc_plot["series"] = report_hashes
     vc_plot["data"] = []
     for c in app.configs:
       cc_data = {}
-      cc_data["Configuration"] = c.name
+      cc_data["xlabel"] = c.name
       for (h, d) in zip(report_hashes, report_data):
         cc_data[h] = "{0:.4f}".format(d[app.name + "/" + c.name])
       vc_plot["data"].append(cc_data)
@@ -103,10 +104,11 @@ def main():
   for aa in ac_apps:
     vc_plot = {}
     vc_plot["title"] = "{0} Performance Comparison".format(" vs ".join(a.name for a in aa))
+    vc_plot["series"] = [a.name for a in aa]
     vc_plot["data"] = []
     for c in aa[0].configs:
       cc_data = {}
-      cc_data["Configuration"] = c.name
+      cc_data["xlabel"] = c.name
       for a in aa:
         cc_data[a.name] = "{0:.4f}".format(report_data[0][a.name + "/" + c.name])
       vc_plot["data"].append(cc_data)
