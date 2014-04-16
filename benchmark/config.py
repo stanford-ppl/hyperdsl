@@ -54,7 +54,7 @@ dsls = [OptiML, Delite]
 
 configs = [ Config.smp(1), Config.smp(2), Config.smp(4), Config.smp(8) ]
 
-gda = App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/1024-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
+gda = App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/2048-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
 logreg = App(OptiML, "LogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs)
 kmeans = App(OptiML, "kMeans", "/kunle/ppl/delite/data/ml/kmeans/mandrill-xlarge.dat /kunle/ppl/delite/data/ml/kmeans/initmu.dat", configs)
 rbm = App(OptiML, "RBM", "/kunle/ppl/delite/data/ml/rbm/mnist2000x10.dat 2000 2000", configs)
@@ -63,7 +63,7 @@ naivebayes = App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAI
   runner_class="NBCompiler")
 
 
-delite_gda = App(Delite, "DeliteGDA", "/kunle/ppl/delite/data/ml/gda/1024-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs,
+delite_gda = App(Delite, "DeliteGDA", "/kunle/ppl/delite/data/ml/gda/2048-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs,
   runner_class="ppl.apps.ml.gda.GDARunner")
 delite_logreg = App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs, 
   runner_class="ppl.apps.ml.logreg.LogRegRunner", delitec_options="--ns")
