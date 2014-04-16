@@ -82,12 +82,12 @@ default_apps = [ "gda", "logreg", "kmeans", "rbm", "svm", "naivebayes",
   "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_svm", "delite_naivebayes" ]
 
 app_comparison_plots = [
-  [gda, delite_gda],
-  [logreg, delite_logreg],
-  [kmeans, delite_kmeans],
-  [rbm, delite_rbm],
-  [svm, delite_svm],
-  [naivebayes, delite_naivebayes]
+  ["gda", "delite_gda"],
+  ["logreg", "delite_logreg"],
+  ["kmeans", "delite_kmeans"],
+  ["rbm", "delite_rbm"],
+  ["svm", "delite_svm"],
+  ["naivebayes", "delite_naivebayes"]
 ]
 
 
