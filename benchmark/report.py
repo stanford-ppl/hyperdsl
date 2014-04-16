@@ -56,65 +56,8 @@ def main():
     if(args.verbose):
       print("notice: identified app-comparison {0}".format(",".join(a.name for a in ac)), file=sys.stderr)
 
-  exit(0)
-
   # chdir to the hyperdsl root directory
   hyperdsl_root = util.chdir_hyperdsl_root()
-
-  # check that there are no changes to the repository
-  git_status = subprocess.check_output("git status -s", shell=True)
-  if((not args.force) and (git_status != "")):
-    print("error: hyperdsl repository contains uncommitted changes", file=sys.stderr)
-    print("       commit these changes before running benchmark.py", file=sys.stderr)
-    exit(-1)
-
-  # identify the hash associated with the current branch
-  git_hash = subprocess.check_output("git rev-parse --short HEAD", shell=True).strip()
-  if(args.verbose):
-    print("notice: identified git hash {0}".format(git_hash), file=sys.stderr)
-
-  if(args.verbose):
-    print("notice: creating directory for experimental results", file=sys.stderr)
-  subprocess.check_call("rm -f benchmark/times/latest", shell=True)
-  subprocess.check_call("mkdir -p benchmark/times/{0}".format(git_hash), shell=True)
-  subprocess.check_call("ln -s {0} benchmark/times/latest".format(git_hash), shell=True)
-
-  if(args.verbose):
-    print("notice: publishing forge dsls", file=sys.stderr)
-  for dsl in config.dsls:
-    if dsl.needs_publish:
-      if(args.verbose):
-        print("notice: publishing {0}".format(dsl.name), file=sys.stderr)
-      subprocess.check_call(dsl.publish_command, stdout=sys.stderr, stderr=sys.stderr, shell=True)
-
-  delite_options = "-r {0}".format(args.runs)
-  if(args.verbose):
-    delite_options += " -v"
-
-  if(args.verbose):
-    print("notice: running apps", file=sys.stderr)
-  for app in config.apps:
-    if(args.verbose):
-      print("notice: staging {0}".format(app.name), file=sys.stderr)
-    os.chdir(app.dsl.run_dir)
-    subprocess.call(app.stage_command(), 
-      stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}.delitec.out".format(git_hash, app.name), "w"), 
-      stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}.delitec.err".format(git_hash, app.name), "w"), 
-      shell=True)
-    for c in app.configs:
-      if(args.verbose):
-        print("notice: running {0} under configuration {1}".format(app.name, c.name))
-      opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0} -Dstats.output.filename={1}-{2}.times {3}".format(
-        hyperdsl_root + "/benchmark/times/" + git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
-      os.putenv("JAVA_OPTS", opts)
-      subprocess.call(app.run_command(c, delite_options), 
-        stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}-{2}.delite.out".format(git_hash, app.name, c.name), "w"), 
-        stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}-{2}.delite.err".format(git_hash, app.name, c.name), "w"), 
-        shell=True)
-    os.chdir(hyperdsl_root)
-
-  if(args.skip_report):
-    return 0
 
   # identify the most recent timed hashes
   if(args.verbose):
@@ -132,15 +75,12 @@ def main():
     if(args.verbose):
       print("notice: ran out of previous hashes", file=sys.sterrr)
 
-  if(git_hash not in report_hashes):
-    print("error: couldn't find data for the runs we just did")
-
   # load data for all hashes
   report_data = [loadData(h, args.verbose) for h in report_hashes]
 
   # generate the plots
   plot_data = []
-  for app in config.apps:
+  for app in vc_apps:
     vc_plot = {}
     vc_plot["title"] = "{0}/{1} Performance Comparison".format(app.dsl.name, app.name)
     vc_plot["data"] = []
@@ -152,7 +92,7 @@ def main():
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
-  for aa in config.app_comparison_plots:
+  for aa in ac_apps:
     vc_plot = {}
     vc_plot["title"] = "{0} Performance Comparison".format(" vs ".join(a.name for a in aa))
     vc_plot["data"] = []
@@ -165,7 +105,7 @@ def main():
     plot_data.append(vc_plot)
 
   # write out the report
-  with open("benchmark/times/{0}/report.html".format(git_hash), "w") as freport:
+  with open("benchmark/times/latest/report.html".format(git_hash), "w") as freport:
     # write the report head
     print(report_head.format(git_hash), file=freport)
     # write the report title
