@@ -12,37 +12,54 @@ import config
 
 
 def main():
-  parser = argparse.ArgumentParser(description="Gather performance numbers for Delite apps.")
+  parser = argparse.ArgumentParser(description="Generate performance reports for Delite apps.")
   parser.add_argument("-v", "--verbose", action="store_true")
-  parser.add_argument("-f", "--force", action="store_true",
-    help="force execution even if the git repository contains uncommitted changes")
-  parser.add_argument("-r", "--runs", type=int, default="10",
-    help="number of times to run the apps")
-  parser.add_argument("-s", "--skip-report", action="store_true", help="skip generating a report")
-  parser.add_argument("-b", "--bars", type=int, default="3", help="number of bars to display in graphs")
+  parser.add_argument("-b", "--bars", type=int, default="3", 
+    help="number of bars to display in version comparison plots")
+  app_c_group = parser.add_mutually_exclusive_group()
+  app_c_group.add_argument("-a", "--app-comparison", type=str, nargs="*",
+    help="comma-separated list of apps to generate an app comparison plot for")
+  app_c_group.add_argument("-A", "--app-comparison-default", action="store_true",
+    help="use default apps for app comparison")
+  ver_c_group = parser.add_mutually_exclusive_group()
+  ver_c_group.add_argument("-c", "--ver-comparison", type=str, nargs="*",
+    help="app to generate version comparison plot for")
+  ver_c_group.add_argument("-C", "--ver-comparison-default", action="store_true",
+    help="use default apps for version comparison")
 
   args = parser.parse_args()
 
-  # first, change the current working directory to the hyperdsl root
-  hyperdsl_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-  if(os.path.abspath(os.getcwd()) != hyperdsl_root):
-    print("warning: benchmark.py not invoked from root of hyperdsl directory.", file=sys.stderr)
-    print("         attempting to cd to [{0}]".format(hyperdsl_root), file=sys.stderr)
-    os.chdir(hyperdsl_root)
-    if (os.path.abspath(os.getcwd()) != hyperdsl_root):
-      print("error: unable to cd to hyperdsl root directory.", file=sys.stderr)
+  # collect the apps to analyze
+  ac_apps_arg = args.app_comparison
+  if (args.app_comparison_default):
+    ac_apps_arg = config.default_apps
+  vc_apps_arg = args.ver_comparison
+  if (args.ver_comparison_default):
+    vc_apps_arg = config.default_comparison_plots
+  vc_apps = []
+  for a in vc_apps_arg:
+    if(a not in config.apps):
+      print("error: app {0} not found in config file".format(a), file=sys.stderr)
       exit(-1)
-    print("         directory changed successfully!")
+    vc_apps.append(config.apps[a])
+    if(args.verbose):
+      print("notice: identified version-comparison app {0}".format(config.apps[a].name), file=sys.stderr)
+  ac_apps = []
+  for c in ac_apps_arg:
+    ac = []
+    for a in c.split(","):
+      if(a not in config.apps):
+        print("error: app {0} not found in config file".format(a), file=sys.stderr)
+        exit(-1)
+      ac.append(config.apps[a])
+    ac_apps.append(ac)
+    if(args.verbose):
+      print("notice: identified app-comparison {0}".format(",".join(a.name for a in ac)), file=sys.stderr)
 
-  # check that the root of the git repo is equal to the root of the hyperdsl repo
-  try:
-    git_root = subprocess.check_output("git rev-parse --show-toplevel", shell=True).strip()
-    if(git_root != hyperdsl_root):
-      print("error: git root in unexpected location")
-      exit(-1)
-  except subprocess.CalledProcessError as e:
-    print("error: unable to call git.", file=sys.stderr)
-    exit(-1)
+  exit(0)
+
+  # chdir to the hyperdsl root directory
+  hyperdsl_root = util.chdir_hyperdsl_root()
 
   # check that there are no changes to the repository
   git_status = subprocess.check_output("git status -s", shell=True)
