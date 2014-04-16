@@ -130,7 +130,7 @@ def loadData(git_hash, apps, verbose):
   if(verbose):
     print("notice: loading data for hash " + git_hash, file=sys.stderr)
   rv = {}
-  for app in config.apps:
+  for app in apps:
     for c in app.configs:
       cafn = "benchmark/times/{0}/{1}-{2}.times".format(git_hash, app.name, c.name)
       if(os.path.isfile(cafn)):
