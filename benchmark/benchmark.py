@@ -19,7 +19,6 @@ def main():
     help="force execution even if the git repository contains uncommitted changes")
   parser.add_argument("-r", "--runs", type=int, default="10",
     help="number of times to run the apps")
-  parser.add_argument("-a", "--all", action="store_true", help="run all apps")
   parser.add_argument("apps", type=str, nargs="*", default=config.default_apps, help="apps to run")
 
   args = parser.parse_args()
@@ -31,13 +30,14 @@ def main():
     if (a not in config.apps):
       print("error: app {0} not found in config file".format(a), file=sys.stderr)
       exit(-1)
-    if(a.dsl not in dsls):
-      dsls.append(a.dsl)
+    app = config.apps[a]
+    if(app.dsl not in dsls):
+      dsls.append(app.dsl)
       if(args.verbose):
-        print("notice: identified dsl {0}".format(a.dsl.name))
-    apps.append(a)
+        print("notice: identified dsl {0}".format(app.dsl.name))
+    apps.append(app)
     if(args.verbose):
-      print("notice: identified app {0}".format(a.name))
+      print("notice: identified app {0}".format(app.name))
 
   # chdir to the hyperdsl root directory
   util.chdir_hyperdsl_root()
