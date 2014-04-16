@@ -68,13 +68,13 @@ def main():
   for gh in git_log:
     if(os.path.isdir("benchmark/times/" + gh)):
       if(args.verbose):
-        print("notice: identified timed hash " + gh, file=sys.sterrr)
+        print("notice: identified timed hash " + gh, file=sys.stderr)
       report_hashes.append(gh)
       if(len(report_hashes) >= args.bars):
         break
   else:
     if(args.verbose):
-      print("notice: ran out of previous hashes", file=sys.sterrr)
+      print("notice: ran out of previous hashes", file=sys.stderr)
 
   # load data for all hashes
   report_data = [loadData(h, args.verbose) for h in report_hashes]
