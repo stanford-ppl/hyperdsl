@@ -37,6 +37,7 @@ def main():
   ac_apps_arg = args.app_comparison
   if (args.app_comparison_default):
     ac_apps_arg = config.default_comparison_plots
+  apps = []
   vc_apps = []
   for a in vc_apps_arg:
     if(a not in config.apps):
@@ -45,6 +46,8 @@ def main():
     vc_apps.append(config.apps[a])
     if(args.verbose):
       print("notice: identified version-comparison app {0}".format(config.apps[a].name), file=sys.stderr)
+    if(config.apps[a] not in apps):
+      apps.append(config.apps[a])
   ac_apps = []
   for c in ac_apps_arg:
     ac = []
@@ -53,6 +56,8 @@ def main():
         print("error: app {0} not found in config file".format(a), file=sys.stderr)
         exit(-1)
       ac.append(config.apps[a])
+      if(config.apps[a] not in apps):
+        apps.append(config.apps[a])
     ac_apps.append(ac)
     if(args.verbose):
       print("notice: identified app-comparison {0}".format(",".join(a.name for a in ac)), file=sys.stderr)
@@ -77,7 +82,7 @@ def main():
       print("notice: ran out of previous hashes", file=sys.stderr)
 
   # load data for all hashes
-  report_data = [loadData(h, args.verbose) for h in report_hashes]
+  report_data = [loadData(h, apps, args.verbose) for h in report_hashes]
 
   # generate the plots
   plot_data = []
@@ -121,7 +126,7 @@ def main():
     print("</html>", file=freport)
 
 
-def loadData(git_hash, verbose):
+def loadData(git_hash, apps, verbose):
   if(verbose):
     print("notice: loading data for hash " + git_hash, file=sys.stderr)
   rv = {}
