@@ -104,7 +104,7 @@ def main():
     vc_plot = {}
     vc_plot["title"] = "{0} Performance Comparison".format(" vs ".join(a.name for a in aa))
     vc_plot["data"] = []
-    for c in app.configs:
+    for c in aa[0].configs:
       cc_data = {}
       cc_data["Configuration"] = c.name
       for a in aa:
