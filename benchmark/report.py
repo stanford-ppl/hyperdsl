@@ -17,12 +17,12 @@ def main():
   parser.add_argument("-b", "--bars", type=int, default="3", 
     help="number of bars to display in version comparison plots")
   app_c_group = parser.add_mutually_exclusive_group()
-  app_c_group.add_argument("-a", "--app-comparison", type=str, nargs="*",
+  app_c_group.add_argument("-a", "--app-comparison", type=str, nargs="*", default=[]
     help="comma-separated list of apps to generate an app comparison plot for")
   app_c_group.add_argument("-A", "--app-comparison-default", action="store_true",
     help="use default apps for app comparison")
   ver_c_group = parser.add_mutually_exclusive_group()
-  ver_c_group.add_argument("-c", "--ver-comparison", type=str, nargs="*",
+  ver_c_group.add_argument("-c", "--ver-comparison", type=str, nargs="*", default=[]
     help="app to generate version comparison plot for")
   ver_c_group.add_argument("-C", "--ver-comparison-default", action="store_true",
     help="use default apps for version comparison")
