@@ -87,6 +87,7 @@ def main():
   report_data = [loadData(h, apps, args.verbose) for h in report_hashes]
 
   # generate the plots
+  plot_data = []
   for aa in ac_apps:
     vc_plot = {}
     vc_plot["title"] = "{0} Performance Comparison".format(" vs ".join(a.name for a in aa))
@@ -100,7 +101,6 @@ def main():
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
-  plot_data = []
   for app in vc_apps:
     vc_plot = {}
     vc_plot["title"] = "{0}/{1} Performance Comparison".format(app.dsl.name, app.name)
