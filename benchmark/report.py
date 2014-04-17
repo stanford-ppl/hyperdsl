@@ -28,7 +28,7 @@ def main():
   ver_c_group.add_argument("-C", "--ver-comparison-default", action="store_true",
     help="use default apps for version comparison")
   xml_group = parser.add_mutually_exclusive_group()
-  xml_group.add_argument("-x", "--xml", type=str, narge="*", default=[],
+  xml_group.add_argument("-x", "--xml", type=str, nargs="*", default=[],
     help="app to generate spreadsheet for")
   xml_group.add_argument("-X", "--xml-default", action="store_true",
     help="use default apps for spreadsheet generation")
