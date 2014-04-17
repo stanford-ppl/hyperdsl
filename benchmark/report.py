@@ -116,7 +116,7 @@ def main():
       cc_data = {}
       cc_data["xlabel"] = c.name
       for a in aa:
-        cc_data[a.name] = report_data[0][a.name + "/" + c.name]
+        cc_data[a.name] = discardWarmup(report_data[0][a.name + "/" + c.name])
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
@@ -129,7 +129,7 @@ def main():
       cc_data = {}
       cc_data["xlabel"] = c.name
       for (h, d) in zip(report_hashes, report_data):
-        cc_data[h] = d[app.name + "/" + c.name]
+        cc_data[h] = discardWarmup(d[app.name + "/" + c.name])
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
@@ -163,9 +163,8 @@ def loadData(git_hash, apps, verbose):
         rv[app.name + "/" + c.name] = []
   return rv
 
-def dataMean(catimes):
-  stimes = catimes[(len(catimes) // 2):]
-  return sum(catimes)/len(catimes)
+def discardWarmup(catimes):
+  return catimes[(len(catimes) // 2):]
 
 
 report_head = """<!DOCTYPE html>
