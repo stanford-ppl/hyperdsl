@@ -153,7 +153,7 @@ def main():
 
   # make the xml report
   with open("benchmark/times/{0}/report/report.xml".format(git_hash), "w") as fxml:
-    print(report_head, file=fxml)
+    print(xml_head, file=fxml)
     for app in xml_apps:
       print("  <Worksheet ss:name=\"{0}/{1}\">".format(app.dsl.name, app.name), file=fxml)
       print("    <Table>", file=fxml)
