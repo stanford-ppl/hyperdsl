@@ -174,8 +174,8 @@ def main():
         lca = len(report_data[0][app.name + "/" + c.name])
         print("        <Cell ss:Formula=\"=AVERAGE(R{0}C:R{1}C)\"></Cell>".format(lca // 2 + 2, lca + 1), file=fxml)
       print("      </Row>", file=fxml)
-    print("    </Table>", file=fxml)
-    print("  </Worksheet>", file=fxml)
+      print("    </Table>", file=fxml)
+      print("  </Worksheet>", file=fxml)
     print("</Workbook>", file=fxml)
 
 
