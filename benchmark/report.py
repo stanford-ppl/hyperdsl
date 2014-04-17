@@ -133,8 +133,11 @@ def main():
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
+  # make report directory
+  subprocess.check_call("mkdir -p benchmark/times/{0}/report".format(git_hash), shell=True)
+
   # write out the report
-  with open("benchmark/times/{0}/report.html".format(git_hash), "w") as freport:
+  with open("benchmark/times/{0}/report/report.html".format(git_hash), "w") as freport:
     # write the report head
     print(report_head.format(git_hash), file=freport)
     # write the report title
@@ -147,6 +150,33 @@ def main():
     # and close the tags
     print("</body>", file=freport)
     print("</html>", file=freport)
+
+  # make the xml report
+  with open("benchmark/times/{0}/report/report.xml".format(git_hash), "w") as fxml:
+    print(report_head, file=fxml)
+    for app in xml_apps:
+      print("  <Worksheet ss:name=\"{0}/{1}\">".format(app.dsl.name, app.name), file=fxml)
+      print("    <Table>", file=fxml)
+      print("      <Row>", file=fxml)
+      print("        <Cell><Data ss:Type=\"String\">Run</Data></Cell>".format(c.name), file=fxml)
+      for c in app.configs:
+        print("        <Cell><Data ss:Type=\"String\">{0}</Data></Cell>".format(c.name), file=fxml)
+      print("      </Row>", file=fxml)
+      for i in range(max(len(report_data[0][app.name "/" c.name]) for c in app.configs)):
+        print("      <Row>", file=fxml)
+        print("        <Cell><Data ss:Type=\"Number\">{0}</Data></Cell>".format(i), file=fxml)
+        for c in app.configs:
+          print("        <Cell><Data ss:Type=\"Number\">{0}</Data></Cell>".format(report_data[0][app.name "/" c.name][i]), file=fxml)
+        print("      </Row>", file=fxml)
+      print("      <Row>", file=fxml)
+      print("        <Cell><Data ss:Type=\"String\">Mean</Data></Cell>".format(c.name), file=fxml)
+      for c in app.configs:
+        lca = len(report_data[0][app.name "/" c.name])
+        print("        <Cell ss:Formula=\"=AVERAGE(R{0}C:R{1}C)\"></Cell>".format(lca // 2 + 2, lca + 1), file=fxml)
+      print("      </Row>", file=fxml)
+    print("    </Table>")
+    print("  </Worksheet>")
+    print("</Workbook>")
 
 
 def loadData(git_hash, apps, verbose):
@@ -179,6 +209,12 @@ report_head = """<!DOCTYPE html>
 </head>
 <body>"""
 
+xml_head = """<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+    xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+    xmlns:html="http://www.w3.org/TR/REC-html40">"""
 
 if __name__ == "__main__":
   main()
