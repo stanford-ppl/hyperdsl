@@ -116,7 +116,7 @@ def main():
       cc_data = {}
       cc_data["xlabel"] = c.name
       for a in aa:
-        cc_data[a.name] = "{0}".format(report_data[0][a.name + "/" + c.name])
+        cc_data[a.name] = "{0}".format(dataMean(report_data[0][a.name + "/" + c.name]))
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
@@ -129,7 +129,7 @@ def main():
       cc_data = {}
       cc_data["xlabel"] = c.name
       for (h, d) in zip(report_hashes, report_data):
-        cc_data[h] = "{0}".format(d[app.name + "/" + c.name])
+        cc_data[h] = "{0}".format(dataMean(d[app.name + "/" + c.name]))
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
@@ -157,15 +157,15 @@ def loadData(git_hash, apps, verbose):
     for c in app.configs:
       cafn = "benchmark/times/{0}/{1}-{2}.times".format(git_hash, app.name, c.name)
       if(os.path.isfile(cafn)):
-        with open(cafn, "r") as f:
-          catimes = f.read().strip().split("\n")
-          # discard the first half of the entries
-          catimes = catimes[(len(catimes) // 2):]         
-          rv[app.name + "/" + c.name] = sum(float(t)*1e-6 for t in catimes)/len(catimes)
+        with open(cafn, "r") as f:    
+          rv[app.name + "/" + c.name] = [float(t)*1e-6 for t in f.read().strip().split("\n")]
       else:
-        rv[app.name + "/" + c.name] = 0
+        rv[app.name + "/" + c.name] = []
   return rv
 
+def dataMean(catimes):
+  stimes = catimes[(len(catimes) // 2):]
+  return sum(catimes)/len(catimes)
 
 
 report_head = """<!DOCTYPE html>
