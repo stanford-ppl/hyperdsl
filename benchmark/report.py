@@ -27,6 +27,11 @@ def main():
     help="app to generate version comparison plot for")
   ver_c_group.add_argument("-C", "--ver-comparison-default", action="store_true",
     help="use default apps for version comparison")
+  xml_group = parser.add_mutually_exclusive_group()
+  xml_group.add_argument("-x", "--xml", type=str, narge="*", default=[],
+    help="app to generate spreadsheet for")
+  xml_group.add_argument("-X", "--xml-default", action="store_true",
+    help="use default apps for spreadsheet generation")
 
   args = parser.parse_args()
 
@@ -34,9 +39,13 @@ def main():
   vc_apps_arg = args.ver_comparison
   if (args.ver_comparison_default):
     vc_apps_arg = config.default_apps
+  xml_apps_arg = args.xml
+  if (args.xml_default):
+    xml_apps_arg = config.default_apps
   ac_apps_arg = args.app_comparison
   if (args.app_comparison_default):
     ac_apps_arg = config.default_comparison_plots
+
   apps = []
   vc_apps = []
   for a in vc_apps_arg:
@@ -46,6 +55,16 @@ def main():
     vc_apps.append(config.apps[a])
     if(args.verbose):
       print("notice: identified version-comparison app {0}".format(config.apps[a].name), file=sys.stderr)
+    if(config.apps[a] not in apps):
+      apps.append(config.apps[a])
+  xml_apps = []
+  for a in xml_apps_arg:
+    if(a not in config.apps):
+      print("error: app {0} not found in config file".format(a), file=sys.stderr)
+      exit(-1)
+    xml_apps.append(config.apps[a])
+    if(args.verbose):
+      print("notice: identified spreadsheet app {0}".format(config.apps[a].name), file=sys.stderr)
     if(config.apps[a] not in apps):
       apps.append(config.apps[a])
   ac_apps = []
