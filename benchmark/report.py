@@ -116,7 +116,7 @@ def main():
       cc_data = {}
       cc_data["xlabel"] = c.name
       for a in aa:
-        cc_data[a.name] = "{0}".format(dataMean(report_data[0][a.name + "/" + c.name]))
+        cc_data[a.name] = ["{0}".format(x) for x in report_data[0][a.name + "/" + c.name]]
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
@@ -129,7 +129,7 @@ def main():
       cc_data = {}
       cc_data["xlabel"] = c.name
       for (h, d) in zip(report_hashes, report_data):
-        cc_data[h] = "{0}".format(dataMean(d[app.name + "/" + c.name]))
+        cc_data[h] = ["{0}".format(x) for x in d[app.name + "/" + c.name]]
       vc_plot["data"].append(cc_data)
     plot_data.append(vc_plot)
 
