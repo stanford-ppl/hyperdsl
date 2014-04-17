@@ -158,21 +158,21 @@ def main():
       print("  <Worksheet ss:Name=\"{0}\">".format(app.name), file=fxml)
       print("    <Table>", file=fxml)
       print("      <Row>", file=fxml)
-      print("        <Cell><Data ss:Type=\"String\">Run</Data></Cell>".format(c.name), file=fxml)
+      print("        <Cell ss:StyleID=\"s3\"><Data ss:Type=\"String\">Run</Data></Cell>".format(c.name), file=fxml)
       for c in app.configs:
-        print("        <Cell><Data ss:Type=\"String\">{0}</Data></Cell>".format(c.name), file=fxml)
+        print("        <Cell ss:StyleID=\"s3\"><Data ss:Type=\"String\">{0}</Data></Cell>".format(c.name), file=fxml)
       print("      </Row>", file=fxml)
       for i in range(max(len(report_data[0][app.name + "/" + c.name]) for c in app.configs)):
         print("      <Row>", file=fxml)
-        print("        <Cell><Data ss:Type=\"Number\">{0}</Data></Cell>".format(i), file=fxml)
+        print("        <Cell ss:StyleID=\"s4\"><Data ss:Type=\"Number\">{0}</Data></Cell>".format(i+1), file=fxml)
         for c in app.configs:
-          print("        <Cell><Data ss:Type=\"Number\">{0}</Data></Cell>".format(report_data[0][app.name + "/" + c.name][i]), file=fxml)
+          print("        <Cell ss:StyleID=\"s1\"><Data ss:Type=\"Number\">{0}</Data></Cell>".format(report_data[0][app.name + "/" + c.name][i]), file=fxml)
         print("      </Row>", file=fxml)
       print("      <Row>", file=fxml)
-      print("        <Cell><Data ss:Type=\"String\">Mean</Data></Cell>".format(c.name), file=fxml)
+      print("        <Cell ss:StyleID=\"s2\"><Data ss:Type=\"String\">Mean</Data></Cell>".format(c.name), file=fxml)
       for c in app.configs:
         lca = len(report_data[0][app.name + "/" + c.name])
-        print("        <Cell ss:Formula=\"=AVERAGE(R{0}C:R{1}C)\"></Cell>".format(lca // 2 + 2, lca + 1), file=fxml)
+        print("        <Cell ss:StyleID=\"s2\" ss:Formula=\"=AVERAGE(R{0}C:R{1}C)\"></Cell>".format(lca // 2 + 2, lca + 1), file=fxml)
       print("      </Row>", file=fxml)
       print("    </Table>", file=fxml)
       print("  </Worksheet>", file=fxml)
@@ -214,7 +214,29 @@ xml_head = """<?xml version="1.0"?>
     xmlns:o="urn:schemas-microsoft-com:office:office"
     xmlns:x="urn:schemas-microsoft-com:office:excel"
     xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-    xmlns:html="http://www.w3.org/TR/REC-html40">"""
+    xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Styles>
+    <Style ss:ID="s1">
+     <Alignment ss:Vertical="Bottom"/>
+     <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
+     <NumberFormat ss:Format="0.000"/>
+     <Interior/>
+    </Style>
+    <Style ss:ID="s2">
+     <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000" ss:Bold="1"/>
+     <Interior ss:Color="#A2BD90" ss:Pattern="Solid"/>
+     <NumberFormat ss:Format="0.000"/>
+    </Style>
+    <Style ss:ID="s3">
+     <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1" ss:Italic="1"/>
+     <Interior ss:Color="#000000" ss:Pattern="Solid"/>
+    </Style>
+    <Style ss:ID="s4">
+     <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+     <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
+     <Interior ss:Color="#969696" ss:Pattern="Solid"/>
+    </Style>
+  </Styles>"""
 
 if __name__ == "__main__":
   main()
