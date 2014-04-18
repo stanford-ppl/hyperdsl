@@ -165,8 +165,8 @@ def main():
       for c in app.configs:
         print("        <Cell ss:StyleID=\"s3\"><Data ss:Type=\"String\">{0}</Data></Cell>".format(c.name), file=fxml)
       print("      </Row>", file=fxml)
-      imax = range(max(len(report_data[0][app.name + "/" + c.name]) for c in app.configs))
-      for i in imax:
+      imax = max(len(report_data[0][app.name + "/" + c.name]) for c in app.configs)
+      for i in range(imax):
         print("      <Row>", file=fxml)
         print("        <Cell ss:StyleID=\"s4\"><Data ss:Type=\"Number\">{0}</Data></Cell>".format(i+1), file=fxml)
         for c in app.configs:
