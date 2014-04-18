@@ -165,7 +165,8 @@ def main():
       for c in app.configs:
         print("        <Cell ss:StyleID=\"s3\"><Data ss:Type=\"String\">{0}</Data></Cell>".format(c.name), file=fxml)
       print("      </Row>", file=fxml)
-      for i in range(max(len(report_data[0][app.name + "/" + c.name]) for c in app.configs)):
+      imax = range(max(len(report_data[0][app.name + "/" + c.name]) for c in app.configs))
+      for i in imax:
         print("      <Row>", file=fxml)
         print("        <Cell ss:StyleID=\"s4\"><Data ss:Type=\"Number\">{0}</Data></Cell>".format(i+1), file=fxml)
         for c in app.configs:
@@ -175,7 +176,7 @@ def main():
       print("        <Cell ss:StyleID=\"s2\"><Data ss:Type=\"String\">Mean</Data></Cell>".format(c.name), file=fxml)
       for c in app.configs:
         lca = len(report_data[0][app.name + "/" + c.name])
-        print("        <Cell ss:StyleID=\"s2\" ss:Formula=\"=AVERAGE(R{0}C:R{1}C)\"></Cell>".format(lca // 2 + 2, lca + 1), file=fxml)
+        print("        <Cell ss:StyleID=\"s2\" ss:Formula=\"=AVERAGE(R[{0}]C:R[{1}]C)\"></Cell>".format(lca // 2 + 2 - (imax+2), lca + 1 - (imax+2)), file=fxml)
       print("      </Row>", file=fxml)
       print("      <Row>", file=fxml)
       print("        <Cell ss:StyleID=\"s5\"><Data ss:Type=\"String\">Speedup</Data></Cell>".format(c.name), file=fxml)
