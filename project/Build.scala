@@ -30,7 +30,7 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
     //we need tests to run in isolation across all projects
     parallelExecution in Test := false,
-    concurrentRestrictions in Global += Tags.limitAll(1)
+    concurrentRestrictions in Global := (Tags.limitAll(1) :: Nil)
   )
 
   val deliteBuildSettings = virtBuildSettingsBase ++ Seq(
