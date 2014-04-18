@@ -154,7 +154,7 @@ def main():
   # make the xml report
   with open("benchmark/times/{0}/report/report.xml".format(git_hash), "w") as fxml:
     print(xml_head, file=fxml)
-    print("  <Worksheet ss:Name=\"{0}\">".format(app.name), file=fxml)
+    print("  <Worksheet ss:Name=\"Performance for {0}\">".format(git_hash), file=fxml)
     print("    <Table>", file=fxml)
     for app in xml_apps:
       print("      <Row>", file=fxml)
@@ -251,7 +251,7 @@ xml_head = """<?xml version="1.0"?>
      <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
      <NumberFormat ss:Format="0.000"/>
     </Style>
-    <Style ss:ID="s7">
+    <Style ss:ID="s6">
      <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1" ss:Underline="Single"/>
      <Interior ss:Color="#000000" ss:Pattern="Solid"/>
     </Style>
