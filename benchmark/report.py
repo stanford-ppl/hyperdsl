@@ -254,6 +254,7 @@ xml_head = """<?xml version="1.0"?>
     <Style ss:ID="s6">
      <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1" ss:Underline="Single"/>
      <Interior ss:Color="#000000" ss:Pattern="Solid"/>
+     <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
     </Style>
   </Styles>"""
 
