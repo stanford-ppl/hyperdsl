@@ -159,7 +159,7 @@ def main():
     for app in xml_apps:
       print("      <Row>", file=fxml)
       print("        <Cell ss:MergeAcross=\"4\" ss:StyleID=\"s6\"><Data ss:Type=\"String\">{0}/{1}</Data></Cell>".format(app.dsl.name, app.name), file=fxml)
-      print("      </Row>")
+      print("      </Row>", file=fxml)
       print("      <Row>", file=fxml)
       print("        <Cell ss:StyleID=\"s3\"><Data ss:Type=\"String\">Run</Data></Cell>".format(c.name), file=fxml)
       for c in app.configs:
