@@ -154,9 +154,12 @@ def main():
   # make the xml report
   with open("benchmark/times/{0}/report/report.xml".format(git_hash), "w") as fxml:
     print(xml_head, file=fxml)
+    print("  <Worksheet ss:Name=\"{0}\">".format(app.name), file=fxml)
+    print("    <Table>", file=fxml)
     for app in xml_apps:
-      print("  <Worksheet ss:Name=\"{0}\">".format(app.name), file=fxml)
-      print("    <Table>", file=fxml)
+      print("      <Row>", file=fxml)
+      print("        <Cell ss:MergeAcross="4" ss:StyleID=\"s6\"><Data ss:Type=\"String\">{0}/{1}</Data></Cell>".format(app.dsl.name, app.name), file=fxml)
+      print("      </Row>")
       print("      <Row>", file=fxml)
       print("        <Cell ss:StyleID=\"s3\"><Data ss:Type=\"String\">Run</Data></Cell>".format(c.name), file=fxml)
       for c in app.configs:
@@ -180,8 +183,9 @@ def main():
         lca = len(report_data[0][app.name + "/" + c.name])
         print("        <Cell ss:StyleID=\"s5\" ss:Formula=\"=R[-1]C2/R[-1]C\"></Cell>", file=fxml)
       print("      </Row>", file=fxml)
-      print("    </Table>", file=fxml)
-      print("  </Worksheet>", file=fxml)
+      print("      <Row></Row>", file=fxml)
+    print("    </Table>", file=fxml)
+    print("  </Worksheet>", file=fxml)
     print("</Workbook>", file=fxml)
 
 
@@ -246,6 +250,10 @@ xml_head = """<?xml version="1.0"?>
      <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000" ss:Bold="1"/>
      <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
      <NumberFormat ss:Format="0.000"/>
+    </Style>
+    <Style ss:ID="s7">
+     <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1" ss:Underline="Single"/>
+     <Interior ss:Color="#000000" ss:Pattern="Solid"/>
     </Style>
   </Styles>"""
 
