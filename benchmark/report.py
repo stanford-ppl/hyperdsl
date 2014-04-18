@@ -174,6 +174,12 @@ def main():
         lca = len(report_data[0][app.name + "/" + c.name])
         print("        <Cell ss:StyleID=\"s2\" ss:Formula=\"=AVERAGE(R{0}C:R{1}C)\"></Cell>".format(lca // 2 + 2, lca + 1), file=fxml)
       print("      </Row>", file=fxml)
+      print("      <Row>", file=fxml)
+      print("        <Cell ss:StyleID=\"s5\"><Data ss:Type=\"String\">Speedup</Data></Cell>".format(c.name), file=fxml)
+      for c in app.configs:
+        lca = len(report_data[0][app.name + "/" + c.name])
+        print("        <Cell ss:StyleID=\"s5\" ss:Formula=\"=R[-1]C2/R[-1]C\"></Cell>", file=fxml)
+      print("      </Row>", file=fxml)
       print("    </Table>", file=fxml)
       print("  </Worksheet>", file=fxml)
     print("</Workbook>", file=fxml)
@@ -235,6 +241,11 @@ xml_head = """<?xml version="1.0"?>
      <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
      <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000"/>
      <Interior ss:Color="#969696" ss:Pattern="Solid"/>
+    </Style>
+    <Style ss:ID="s5">
+     <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#000000" ss:Bold="1"/>
+     <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+     <NumberFormat ss:Format="0.000"/>
     </Style>
   </Styles>"""
 
