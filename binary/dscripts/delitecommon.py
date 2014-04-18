@@ -44,7 +44,6 @@ def loadProps():
 def checkCommonEnv():
     global USER_HOME
     global JAVA_HOME
-    global SCALA_VIRT_HOME
     global MESOS_NATIVE_LIBRARY
     global DELITE_MEM
 
