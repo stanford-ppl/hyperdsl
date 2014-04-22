@@ -3,27 +3,23 @@ import sbt._
 import Keys._
 
 object HUMAN_DSL_NAMEBuild extends Build {
-  val virtScala = "2.10.2-RC1"
-
-  val scalaTestCompile = "org.scalatest" % "scalatest_2.10" % "2.0.M5b"
-  val scalaTest = scalaTestCompile % "test"
+  val virtScala = "2.10.2"
 
   val virtBuildSettingsBase = Project.defaultSettings ++ Seq(
     organization := "stanford-ppl",
     scalaOrganization := "org.scala-lang.virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
-    // needed for scala.tools, which is apparently not included in sbt's built in version
     libraryDependencies += "org.scala-lang.virtualized" % "scala-library" % virtScala,
     libraryDependencies += "org.scala-lang.virtualized" % "scala-compiler" % virtScala,
+    libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.2",
+    
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
     libraryDependencies += "com.googlecode.netlib-java" % "netlib-java" % "0.9.3",
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.4.1",
     libraryDependencies += "org.apache.mesos" % "mesos" % "0.9.0-incubating",
     libraryDependencies += "org.apache.hadoop" % "hadoop-core" % "1.2.0",
-    libraryDependencies += "org.scala-lang" % "scala-actors" % virtScala, // for ScalaTest
-    libraryDependencies += scalaTest,
     // used in delitec to access jars
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
