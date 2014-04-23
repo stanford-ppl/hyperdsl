@@ -11,6 +11,14 @@ runners=( "ppl.dsl.forge.examples.SimpleVectorDSLRunner" "ppl.dsl.forge.dsls.opt
 # exit if any part of the script fails
 set -e
 
+E_BADENV=65
+
+# check for required env variables
+if [ -z "${HYPER_HOME}" ]; then echo error: HYPER_HOME is not defined; exit $E_BADENV; fi
+if [ -z "${LMS_HOME}" ]; then echo error: LMS_HOME is not defined; exit $E_BADENV; fi
+if [ -z "${DELITE_HOME}" ]; then echo error: DELITE_HOME is not defined; exit $E_BADENV; fi
+if [ -z "${FORGE_HOME}" ]; then echo error: FORGE_HOME is not defined; exit $E_BADENV; fi
+
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
 sbt -Dtests.threads=1 "; project tests; test"
