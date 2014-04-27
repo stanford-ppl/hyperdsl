@@ -19,13 +19,16 @@ if [ -z "${LMS_HOME}" ]; then echo error: LMS_HOME is not defined; exit $E_BADEN
 if [ -z "${DELITE_HOME}" ]; then echo error: DELITE_HOME is not defined; exit $E_BADENV; fi
 if [ -z "${FORGE_HOME}" ]; then echo error: FORGE_HOME is not defined; exit $E_BADENV; fi
 
+# remove previous delite runtime cache
+rm -rf $DELITE_HOME/generatedCache
+
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
-sbt -Dtests.threads=1 "; project tests; test"
+sbt -Dtests.threads=1 -Dtests.targets=scala,cpp "; project tests; test"
 
 # and again multi-threaded
 echo "[test-all]: running Delite and Delite DSL tests (8 threads)"
-sbt -Dtests.threads=8 "; project tests; test"
+sbt -Dtests.threads=8 -Dtests.targets=scala,cpp "; project tests; test"
 
 # all Forge DSL tests
 echo "[test-all]: running Forge DSL tests"
@@ -37,9 +40,9 @@ do
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
     echo "[test-all]: running $dsl tests (1 thread)"
-    sbt -Dtests.threads=1 "; project $dsl-tests; test"
+    sbt -Dtests.threads=1 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
     echo "[test-all]: running $dsl tests (8 threads)"
-    sbt -Dtests.threads=8 "; project $dsl-tests; test"
+    sbt -Dtests.threads=8 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
     popd
  done
 
