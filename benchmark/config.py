@@ -30,17 +30,28 @@ class App(object):
   def stage_command(self):
     return "bin/delitec %s %s" % (self.delitec_options, self.runner_class)
 
-  def run_command(self, c, extra_options):
+  def run_command(self, c, runs, verbose):
+    if(c.run_only_once):
+      extra_options = "-r 1"
+    else:
+      extra_options = "-r {0}".format(runs)
+    if(args.verbose):
+      extra_options += " -v"
     return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, self.args)
 
 class Config(object):
-  def __init__(self, name, delite_options):
+  def __init__(self, name, delite_options, run_only_once = False):
     self.name = name
     self.delite_options = delite_options
+    self.run_only_once = run_only_once
 
   @staticmethod
   def smp(threads):
     return Config("smp%d" % threads, "-t %d" % threads)
+
+  @staticmethod
+  def cpp(threads):
+    return Config("cpp%d" % threads, "-t 1 --cpp %d" % threads, True)
 
   @staticmethod
   def gpu():
@@ -52,30 +63,33 @@ Delite = Dsl("Delite", "delite", "sbt \"; project optiml-apps; compile\"; rm -rf
 
 dsls = [OptiML, Delite]
 
-configs = [ Config.smp(1), Config.smp(2), Config.smp(4), Config.smp(8) ]
+configs = [ 
+  Config.smp(1), Config.smp(2), Config.smp(4), Config.smp(8),
+  Config.cpp(1), Config.cpp(2), Config.cpp(4), Config.cpp(8)
+]
 
 apps = {}
 
-apps["gda"] = App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/2048-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
+apps["gda"] = App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/1024-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
 apps["logreg"] = App(OptiML, "LogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs)
 apps["kmeans"] = App(OptiML, "kMeans", "/kunle/ppl/delite/data/ml/kmeans/mandrill-xlarge.dat /kunle/ppl/delite/data/ml/kmeans/initmu.dat", configs)
-apps["rbm"] = App(OptiML, "RBM", "/kunle/ppl/delite/data/ml/rbm/mnist2000x10.dat 2000 2000", configs)
-apps["svm"] = App(OptiML, "SVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAIN.400 /kunle/ppl/delite/data/ml/svm/MATRIX.TEST", configs)
-apps["naivebayes"] = App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.50k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
+apps["rbm"] = App(OptiML, "RBM", "/kunle/ppl/delite/data/ml/rbm/mnist2000.dat 2000 2000", configs)
+apps["svm"] = App(OptiML, "SVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAIN.100 /kunle/ppl/delite/data/ml/svm/MATRIX.TEST", configs)
+apps["naivebayes"] = App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.250k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
   runner_class="NBCompiler")
 
 
-apps["delite_gda"] = App(Delite, "DeliteGDA", "/kunle/ppl/delite/data/ml/gda/2048-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs,
+apps["delite_gda"] = App(Delite, "DeliteGDA", "/kunle/ppl/delite/data/ml/gda/1024-1200x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs,
   runner_class="ppl.apps.ml.gda.GDARunner")
 apps["delite_logreg"] = App(Delite, "DeliteLogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs, 
   runner_class="ppl.apps.ml.logreg.LogRegRunner", delitec_options="--ns")
 apps["delite_kmeans"] = App(Delite, "DelitekMeans", "/kunle/ppl/delite/data/ml/kmeans/mandrill-xlarge.dat /kunle/ppl/delite/data/ml/kmeans/initmu.dat", configs,
   runner_class="ppl.apps.ml.kmeans.kmeansRunner")
-apps["delite_rbm"] = App(Delite, "DeliteRBM", "/kunle/ppl/delite/data/ml/rbm/mnist2000x10.dat 2000 2000", configs,
+apps["delite_rbm"] = App(Delite, "DeliteRBM", "/kunle/ppl/delite/data/ml/rbm/mnist2000.dat 2000 2000", configs,
   runner_class="ppl.apps.ml.rbm.RBMRunner")
-apps["delite_svm"] = App(Delite, "DeliteSVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAIN.400 /kunle/ppl/delite/data/ml/svm/MATRIX.TEST", configs,
+apps["delite_svm"] = App(Delite, "DeliteSVM", "/kunle/ppl/delite/data/ml/svm/MATRIX.TRAIN.100 /kunle/ppl/delite/data/ml/svm/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.svm.SVMRunner")
-apps["delite_naivebayes"] = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.50k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
+apps["delite_naivebayes"] = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.250k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
 default_apps = [ "gda", "logreg", "kmeans", "rbm", "svm", "naivebayes", 

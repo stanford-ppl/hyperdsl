@@ -17,8 +17,10 @@ def main():
   parser.add_argument("-v", "--verbose", action="store_true")
   parser.add_argument("-f", "--force", action="store_true",
     help="force execution even if the git repository contains uncommitted changes")
-  parser.add_argument("-r", "--runs", type=int, default="10",
+  parser.add_argument("-r", "--runs", type=int, default="5",
     help="number of times to run the apps")
+  parser.add_argument("-d", "--directory", type=str, default="/kunle/ppl/delite/benchmark/times",
+    help="directory to write the output into")
   parser.add_argument("apps", type=str, nargs="*", default=config.default_apps, help="apps to run")
 
   args = parser.parse_args()
@@ -56,9 +58,9 @@ def main():
 
   if(args.verbose):
     print("notice: creating directory for experimental results", file=sys.stderr)
-  subprocess.check_call("rm -f benchmark/times/latest", shell=True)
-  subprocess.check_call("mkdir -p benchmark/times/{0}".format(git_hash), shell=True)
-  subprocess.check_call("ln -s {0} benchmark/times/latest".format(git_hash), shell=True)
+  subprocess.check_call("rm -f {0}/latest".format(args.directory), shell=True)
+  subprocess.check_call("mkdir -p {0}/{1}".format(args.directory, git_hash), shell=True)
+  subprocess.check_call("ln -s {0} {1}/latest".format(git_hash, args.directory), shell=True)
 
   if(args.verbose):
     print("notice: publishing forge dsls", file=sys.stderr)
@@ -67,13 +69,9 @@ def main():
       if(args.verbose):
         print("notice: publishing {0}".format(dsl.name), file=sys.stderr)
       subprocess.check_call(dsl.publish_command, 
-        stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}.publish.out".format(git_hash, dsl.name), "w"), 
-        stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}.publish.err".format(git_hash, dsl.name), "w"), 
+        stdout=open("{0}/{1}/{2}.publish.out".format(args.directory, git_hash, dsl.name), "w"), 
+        stderr=open("{0}/{1}/{2}.publish.err".format(args.directory, git_hash, dsl.name), "w"), 
         shell=True)
-
-  delite_options = "-r {0}".format(args.runs)
-  if(args.verbose):
-    delite_options += " -v"
 
   if(args.verbose):
     print("notice: running apps", file=sys.stderr)
@@ -82,18 +80,18 @@ def main():
       print("notice: staging {0}".format(app.name), file=sys.stderr)
     os.chdir(app.dsl.run_dir)
     subprocess.call(app.stage_command(), 
-      stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}.delitec.out".format(git_hash, app.name), "w"), 
-      stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}.delitec.err".format(git_hash, app.name), "w"), 
+      stdout=open("{0}/{1}/{2}.delitec.out".format(args.directory, git_hash, app.name), "w"), 
+      stderr=open("{0}/{1}/{2}.delitec.err".format(args.directory, git_hash, app.name), "w"), 
       shell=True)
     for c in app.configs:
       if(args.verbose):
         print("notice: running {0} under configuration {1}".format(app.name, c.name))
-      opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0} -Dstats.output.filename={1}-{2}.times {3}".format(
-        hyperdsl_root + "/benchmark/times/" + git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
+      opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0}/{1} -Dstats.output.filename={2}-{3}.times {4}".format(
+        args.directory, git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
-      subprocess.call(app.run_command(c, delite_options), 
-        stdout=open(hyperdsl_root + "/benchmark/times/{0}/{1}-{2}.delite.out".format(git_hash, app.name, c.name), "w"), 
-        stderr=open(hyperdsl_root + "/benchmark/times/{0}/{1}-{2}.delite.err".format(git_hash, app.name, c.name), "w"), 
+      subprocess.call(app.run_command(c, args.runs, args.verbose), 
+        stdout=open(hyperdsl_root + "{0}/{1}/{2}-{3}.delite.out".format(args.directory, git_hash, app.name, c.name), "w"), 
+        stderr=open(hyperdsl_root + "{0}/{1}/{2}-{3}.delite.err".format(args.directory, git_hash, app.name, c.name), "w"), 
         shell=True)
     os.chdir(hyperdsl_root)
 
