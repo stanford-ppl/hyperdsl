@@ -92,15 +92,14 @@ apps["delite_svm"] = App(Delite, "DeliteSVM", "/kunle/ppl/delite/data/ml/svm/MAT
 apps["delite_naivebayes"] = App(Delite, "DeliteNaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN.250k /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
 
-default_apps = [ "gda", "logreg", "kmeans", "rbm", "svm", "naivebayes", 
-  "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_svm", "delite_naivebayes" ]
+default_apps = [ "gda", "logreg", "kmeans", "rbm", "naivebayes", 
+  "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_naivebayes" ]
 
 default_comparison_plots = [
   "gda,delite_gda",
   "logreg,delite_logreg",
   "kmeans,delite_kmeans",
   "rbm,delite_rbm",
-  "svm,delite_svm",
   "naivebayes,delite_naivebayes"
 ]
 
