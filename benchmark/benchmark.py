@@ -128,6 +128,10 @@ def main():
         output_json["apps"][app.name]["configs"][c.name]["avg_time"] = 0.0
     os.chdir(hyperdsl_root)
 
+  output_json["end_time"] = time.time()
+  output_json["total_time"] = output_json["end_time"] - output_json["start_time"]
+  if(args.verbose):
+    print("notice: ran for {0} seconds".format(output_json["total_time"]))
   json.dump(output_json, open("{0}/{1}.json".format(args.json_directory, git_hash)))
 
 
