@@ -198,7 +198,7 @@ def loadData(git_hash, apps, verbose):
     for c in app.configs:
       cafn = "benchmark/times/{0}/{1}-{2}.times".format(git_hash, app.name, c.name)
       if(os.path.isfile(cafn)):
-        with open(cafn, "r") as f:    
+        with open(cafn, "r") as f:
           rv[app.name + "/" + c.name] = [float(t)*1e-6 for t in f.read().strip().split("\n")]
       else:
         rv[app.name + "/" + c.name] = []

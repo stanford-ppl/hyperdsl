@@ -28,6 +28,8 @@ def main():
     help="directory to write the raw output into")
   parser.add_argument("-j", "--json-directory", type=str, default="/kunle/ppl/delite/benchmark/json",
     help="directory to write the json output into")
+  parser.add_argument("-s", "--skip-runs", action="store_true",
+    help="skip all process calls")
   parser.add_argument("apps", type=str, nargs="*", default=config.default_apps, help="apps to run")
 
   args = parser.parse_args()
@@ -82,7 +84,8 @@ def main():
     if dsl.needs_publish:
       if(args.verbose):
         print("notice: publishing {0}".format(dsl.name), file=sys.stderr)
-      output_json["dsls"][dsl.name] = json_call(dsl.publish_command, "{0}/{1}/{2}.publish".format(args.directory, git_hash, dsl.name))
+      output_json["dsls"][dsl.name] = json_call(dsl.publish_command, 
+        "{0}/{1}/{2}.publish".format(args.directory, git_hash, dsl.name), args.skip_runs)
 
   if(args.verbose):
     print("notice: running apps", file=sys.stderr)
@@ -91,7 +94,8 @@ def main():
     if(args.verbose):
       print("notice: staging {0}".format(app.name), file=sys.stderr)
     os.chdir(app.dsl.run_dir)
-    output_json["apps"][app.name]["stage"] = json_call(app.stage_command(), "{0}/{1}/{2}.delitec".format(args.directory, git_hash, app.name))
+    output_json["apps"][app.name]["stage"] = json_call(app.stage_command(), 
+      "{0}/{1}/{2}.delitec".format(args.directory, git_hash, app.name), args.skip_runs)
     output_json["apps"][app.name]["configs"] = {}
     for c in app.configs:
       if(args.verbose):
@@ -100,7 +104,7 @@ def main():
         args.directory, git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
       output_json["apps"][app.name]["configs"][c.name] = json_call(app.run_command(c, args.runs, args.verbose),
-        "{0}/{1}/{2}-{3}.delite".format(args.directory, git_hash, app.name, c.name))
+        "{0}/{1}/{2}-{3}.delite".format(args.directory, git_hash, app.name, c.name), args.skip_runs)
       output_json["apps"][app.name]["configs"][c.name]["opts"] = opts
       cafn = "{0}/{1}/{2}-{3}.times".format(args.directory, git_hash, app.name, c.name)
       if(os.path.isfile(cafn)):
@@ -132,14 +136,15 @@ def main():
   output_json["total_time"] = output_json["end_time"] - output_json["start_time"]
   if(args.verbose):
     print("notice: ran for {0} seconds".format(output_json["total_time"]))
-  json.dump(output_json, open("{0}/{1}.json".format(args.json_directory, git_hash)))
+  json.dump(output_json, open("{0}/{1}.json".format(args.json_directory, git_hash), "w"))
 
 
 
-def json_call(command, file_pfx):
+def json_call(command, file_pfx, skip_runs):
   rv = {}
   rv["command"] = command
-  subprocess.call(command, stdout=open(file_pfx + ".out", "w"), stderr=open(file_pfx + ".err", "w"), shell=True)
+  if(not skip_runs):
+    subprocess.call(command, stdout=open(file_pfx + ".out", "w"), stderr=open(file_pfx + ".err", "w"), shell=True)
   rv["out"] = ansi_escape.sub("", open(file_pfx + ".out").read())
   rv["err"] = ansi_escape.sub("", open(file_pfx + ".err").read())
   return rv
