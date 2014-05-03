@@ -90,8 +90,8 @@ def main():
         args.directory, git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
       subprocess.call(app.run_command(c, args.runs, args.verbose), 
-        stdout=open(hyperdsl_root + "{0}/{1}/{2}-{3}.delite.out".format(args.directory, git_hash, app.name, c.name), "w"), 
-        stderr=open(hyperdsl_root + "{0}/{1}/{2}-{3}.delite.err".format(args.directory, git_hash, app.name, c.name), "w"), 
+        stdout=open("{0}/{1}/{2}-{3}.delite.out".format(args.directory, git_hash, app.name, c.name), "w"), 
+        stderr=open("{0}/{1}/{2}-{3}.delite.err".format(args.directory, git_hash, app.name, c.name), "w"), 
         shell=True)
     os.chdir(hyperdsl_root)
 
