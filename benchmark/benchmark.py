@@ -8,10 +8,12 @@ import subprocess
 import time
 import json
 import socket
+import re
 
 import util
 import config
 
+ansi_escape = re.compile(r'\x1b[^m]*m')
 
 def main():
   parser = argparse.ArgumentParser(description="Gather performance numbers for Delite apps.")
@@ -134,8 +136,8 @@ def json_call(command, file_pfx):
   rv = {}
   rv["command"] = command
   subprocess.call(command, stdout=open(file_pfx + ".out", "w"), stderr=open(file_pfx + ".err", "w"), shell=True)
-  rv["out"] = open(file_pfx + ".out").read()
-  rv["err"] = open(file_pfx + ".err").read()
+  rv["out"] = ansi_escape.sub("", open(file_pfx + ".out").read())
+  rv["err"] = ansi_escape.sub("", open(file_pfx + ".err").read())
   return rv
 
 if __name__ == "__main__":
