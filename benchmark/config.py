@@ -35,7 +35,7 @@ class App(object):
       extra_options = "-r 1"
     else:
       extra_options = "-r {0}".format(runs)
-    if(args.verbose):
+    if(verbose):
       extra_options += " -v"
     return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, self.args)
 
