@@ -96,40 +96,42 @@ def main():
     os.chdir(app.dsl.run_dir)
     output_json["apps"][app.name]["stage"] = json_call(app.stage_command(), 
       "{0}/{1}/{2}.delitec".format(args.directory, git_hash, app.name), args.skip_runs)
-    output_json["apps"][app.name]["configs"] = {}
+    output_json["apps"][app.name]["configs"] = []
+    output_json["apps"][app.name]["runs"] = {}
     for c in app.configs:
+      output_json["apps"][app.name]["configs"].append(c)
       if(args.verbose):
         print("notice: running {0} under configuration {1}".format(app.name, c.name))
       opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0}/{1} -Dstats.output.filename={2}-{3}.times {4}".format(
         args.directory, git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
-      output_json["apps"][app.name]["configs"][c.name] = json_call(app.run_command(c, args.runs, args.verbose),
+      output_json["apps"][app.name]["runs"][c.name] = json_call(app.run_command(c, args.runs, args.verbose),
         "{0}/{1}/{2}-{3}.delite".format(args.directory, git_hash, app.name, c.name), args.skip_runs)
-      output_json["apps"][app.name]["configs"][c.name]["opts"] = opts
+      output_json["apps"][app.name]["runs"][c.name]["opts"] = opts
       cafn = "{0}/{1}/{2}-{3}.times".format(args.directory, git_hash, app.name, c.name)
       if(os.path.isfile(cafn)):
         with open(cafn, "r") as ftimes:
           raw_times = [float(t)*1e-6 for t in ftimes.read().strip().split("\n")]
-        output_json["apps"][app.name]["configs"][c.name]["raw_times"] = raw_times
+        output_json["apps"][app.name]["runs"][c.name]["raw_times"] = raw_times
         if (c.run_only_once):
           if(len(raw_times) == 1):
-            output_json["apps"][app.name]["configs"][c.name]["filtered_times"] = raw_times
-            output_json["apps"][app.name]["configs"][c.name]["avg_time"] = raw_times[0]
+            output_json["apps"][app.name]["runs"][c.name]["filtered_times"] = raw_times
+            output_json["apps"][app.name]["runs"][c.name]["avg_time"] = raw_times[0]
           else:
-            output_json["apps"][app.name]["configs"][c.name]["filtered_times"] = []
-            output_json["apps"][app.name]["configs"][c.name]["avg_time"] = 0.0
+            output_json["apps"][app.name]["runs"][c.name]["filtered_times"] = []
+            output_json["apps"][app.name]["runs"][c.name]["avg_time"] = 0.0
         else:
           if(len(raw_times) == args.runs):
             filtered_times = raw_times[args.filtered_runs:]
-            output_json["apps"][app.name]["configs"][c.name]["filtered_times"] = filtered_times
-            output_json["apps"][app.name]["configs"][c.name]["avg_time"] = sum(filtered_times)/(len(filtered_times) + 1e-60)
+            output_json["apps"][app.name]["runs"][c.name]["filtered_times"] = filtered_times
+            output_json["apps"][app.name]["runs"][c.name]["avg_time"] = sum(filtered_times)/(len(filtered_times) + 1e-60)
           else:
-            output_json["apps"][app.name]["configs"][c.name]["filtered_times"] = []
-            output_json["apps"][app.name]["configs"][c.name]["avg_time"] = 0.0
+            output_json["apps"][app.name]["runs"][c.name]["filtered_times"] = []
+            output_json["apps"][app.name]["runs"][c.name]["avg_time"] = 0.0
       else:
-        output_json["apps"][app.name]["configs"][c.name]["raw_times"] = []
-        output_json["apps"][app.name]["configs"][c.name]["filtered_times"] = []
-        output_json["apps"][app.name]["configs"][c.name]["avg_time"] = 0.0
+        output_json["apps"][app.name]["runs"][c.name]["raw_times"] = []
+        output_json["apps"][app.name]["runs"][c.name]["filtered_times"] = []
+        output_json["apps"][app.name]["runs"][c.name]["avg_time"] = 0.0
     os.chdir(hyperdsl_root)
 
   output_json["end_time"] = time.time()
