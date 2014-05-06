@@ -99,7 +99,7 @@ def main():
     output_json["apps"][app.name]["configs"] = []
     output_json["apps"][app.name]["runs"] = {}
     for c in app.configs:
-      output_json["apps"][app.name]["configs"].append(c)
+      output_json["apps"][app.name]["configs"].append(c.name)
       if(args.verbose):
         print("notice: running {0} under configuration {1}".format(app.name, c.name))
       opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0}/{1} -Dstats.output.filename={2}-{3}.times {4}".format(
