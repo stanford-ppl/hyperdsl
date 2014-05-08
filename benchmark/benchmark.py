@@ -77,6 +77,7 @@ def main():
   output_json["host"] = socket.gethostname()
   output_json["dsls"] = {}
   output_json["apps"] = {}
+  output_json["app_names"] = []
 
   if(args.verbose):
     print("notice: publishing forge dsls", file=sys.stderr)
@@ -90,6 +91,7 @@ def main():
   if(args.verbose):
     print("notice: running apps", file=sys.stderr)
   for app in apps:
+    output_json["app_names"].append(app.name)
     output_json["apps"][app.name] = {}
     if(args.verbose):
       print("notice: staging {0}".format(app.name), file=sys.stderr)
