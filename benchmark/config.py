@@ -73,7 +73,7 @@ apps = {}
 apps["gda"] = App(OptiML, "GDA", "/data/ml/gda/1024-1200x.dat /data/ml/gda/q1y.dat", configs)
 apps["logreg"] = App(OptiML, "LogReg", "/data/ml/logreg/x1m10.dat /data/ml/logreg/y1m.dat", configs)
 apps["kmeans"] = App(OptiML, "kMeans", "/data/ml/kmeans/mandrill-large.dat /data/ml/kmeans/initmu.dat", configs)
-apps["rbm"] = App(OptiML, "RBM", "/data/ml/rbm/mnist784.dat 100 100", configs)
+apps["rbm"] = App(OptiML, "RBM", "/data/ml/rbm/mnist2000.dat 2000 1000", configs)
 apps["svm"] = App(OptiML, "SVM", "/data/ml/svm/MATRIX.TRAIN.100 /data/ml/svm/MATRIX.TEST", configs)
 apps["naivebayes"] = App(OptiML, "NaiveBayes", "/data/ml/nb/MATRIX.TRAIN.RANDOM.250K /data/ml/nb/MATRIX.TEST", configs,
   runner_class="NBCompiler")
@@ -85,7 +85,7 @@ apps["delite_logreg"] = App(Delite, "DeliteLogReg", "/data/ml/logreg/x1m10.dat /
   runner_class="ppl.apps.ml.logreg.LogRegRunner", delitec_options="--ns")
 apps["delite_kmeans"] = App(Delite, "DelitekMeans", "/data/ml/kmeans/mandrill-large.dat /data/ml/kmeans/initmu.dat", configs,
   runner_class="ppl.apps.ml.kmeans.kmeansRunner")
-apps["delite_rbm"] = App(Delite, "DeliteRBM", "/data/ml/rbm/mnist784.dat 100 100", configs,
+apps["delite_rbm"] = App(Delite, "DeliteRBM", "/data/ml/rbm/mnist2000.dat 2000 1000", configs,
   runner_class="ppl.apps.ml.rbm.RBMRunner")
 apps["delite_svm"] = App(Delite, "DeliteSVM", "/data/ml/svm/MATRIX.TRAIN.100 /data/ml/svm/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.svm.SVMRunner")
