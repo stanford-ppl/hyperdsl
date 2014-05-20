@@ -10,7 +10,6 @@ import json
 import socket
 import re
 
-import util
 import config
 
 ansi_escape = re.compile(r'\x1b[^m]*m')
