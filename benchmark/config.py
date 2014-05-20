@@ -2,61 +2,105 @@
 
 
 class Dsl(object):
-  def __init__(self, name, runner_class = None):
+  def __init__(self, name, run_dir = None, publish_command = None, needs_publish = True):
     self.name = name
-    if(runner_class == None):
-      self.runner_class = "ppl.dsl.forge.dsls.%s.%sDSLRunner" % (name.lower(), name)
+    if(publish_command == None):
+      self.publish_command = "update ppl.dsl.forge.dsls.%s.%sDSLRunner %s" % (name.lower(), name, name)
     else:
-      self.runner_class = runner_class
-
-  def update_command(self):
-    return "update %s %s" % (self.runner_class, self.name)
+      self.publish_command = publish_command
+    if(run_dir == None):
+      self.run_dir = "published/" + name
+    else:
+      self.run_dir = run_dir
+    self.needs_publish = needs_publish
 
 class App(object):
-  def __init__(self, dsl, name, args, configs, compiler_class = None, interpreter_class = None, delite_options = "", delitec_options = ""):
+  def __init__(self, dsl, name, args, configs, runner_class = None, delite_options = "", delitec_options = ""):
     self.name = name
     self.dsl = dsl
     self.args = args
-    if(compiler_class == None):
-      self.compiler_class = name + "Compiler"
+    if(runner_class == None):
+      self.runner_class = name + "Compiler"
     else:
-      self.compiler_class = compiler_class
-    if(interpreter_class == None):
-      self.interpreter_class = name + "Interpreter"
-    else:
-      self.interpreter_class = interpreter_class
+      self.runner_class = runner_class
     self.configs = configs
     self.delite_options = delite_options
     self.delitec_options = delitec_options
 
   def stage_command(self):
-    return "bin/delitec %s %s" % (self.delitec_options, self.compiler_class)
+    return "bin/delitec -v --cpp %s %s" % (self.delitec_options, self.runner_class)
 
-  def run_command(self, c, extra_options):
-    return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.compiler_class, self.args)
+  def run_command(self, c, runs, verbose):
+    if(c.run_only_once):
+      extra_options = "-r 1"
+    else:
+      extra_options = "-r {0}".format(runs)
+    if(verbose):
+      extra_options += " -v"
+    return "bin/delite %s %s %s %s %s" % (self.delite_options, c.delite_options, extra_options, self.runner_class, self.args)
 
 class Config(object):
-  def __init__(self, name, delite_options):
+  def __init__(self, name, delite_options, run_only_once = False):
     self.name = name
     self.delite_options = delite_options
+    self.run_only_once = run_only_once
 
   @staticmethod
   def smp(threads):
     return Config("smp%d" % threads, "-t %d" % threads)
 
   @staticmethod
+  def cpp(threads):
+    return Config("cpp%d" % threads, "-t 1 --cpp %d" % threads, True)
+
+  @staticmethod
   def gpu():
     return Config("gpu", "-t 1 --gpu")
 
 OptiML = Dsl("OptiML")
+OptiQL = Dsl("OptiQL")
+Delite = Dsl("Delite", "delite", "sbt \"; project optiml-apps; compile\"; rm -rf delite/lib_managed; cp -r lib_managed delite")
 
-dsls = [OptiML]
+dsls = [OptiML, Delite]
 
-configs = [ Config.smp(1), Config.smp(4), Config.smp(16) ]
-
-apps = [
-  App(OptiML, "LogReg", "/kunle/ppl/delite/data/ml/logreg/x1m10.dat /kunle/ppl/delite/data/ml/logreg/y1m.dat", configs),
-  App(OptiML, "NaiveBayes", "/kunle/ppl/delite/data/ml/nb/MATRIX.TRAIN /kunle/ppl/delite/data/ml/nb/MATRIX.TEST", configs,
-    compiler_class="NBCompiler", interpreter_class="NBInterpreter"),
-  App(OptiML, "GDA", "/kunle/ppl/delite/data/ml/gda/q1x.dat /kunle/ppl/delite/data/ml/gda/q1y.dat", configs)
+configs = [ 
+  Config.smp(1), Config.smp(2), Config.smp(4), Config.smp(8),
+  Config.cpp(1), Config.cpp(2), Config.cpp(4), Config.cpp(8)
 ]
+
+apps = {}
+
+apps["gda"] = App(OptiML, "GDA", "/data/ml/gda/1024-1200x.dat /data/ml/gda/q1y.dat", configs)
+apps["logreg"] = App(OptiML, "LogReg", "/data/ml/logreg/x1m10.dat /data/ml/logreg/y1m.dat", configs)
+apps["kmeans"] = App(OptiML, "kMeans", "/data/ml/kmeans/mandrill-large.dat /data/ml/kmeans/initmu.dat", configs)
+apps["rbm"] = App(OptiML, "RBM", "/data/ml/rbm/mnist2000.dat 2000 1000", configs)
+apps["svm"] = App(OptiML, "SVM", "/data/ml/svm/MATRIX.TRAIN.100 /data/ml/svm/MATRIX.TEST", configs)
+apps["naivebayes"] = App(OptiML, "NaiveBayes", "/data/ml/nb/MATRIX.TRAIN.RANDOM.250K /data/ml/nb/MATRIX.TEST", configs,
+  runner_class="NBCompiler")
+
+
+apps["delite_gda"] = App(Delite, "DeliteGDA", "/data/ml/gda/1024-1200x.dat /data/ml/gda/q1y.dat", configs,
+  runner_class="ppl.apps.ml.gda.GDARunner")
+apps["delite_logreg"] = App(Delite, "DeliteLogReg", "/data/ml/logreg/x1m10.dat /data/ml/logreg/y1m.dat", configs, 
+  runner_class="ppl.apps.ml.logreg.LogRegRunner", delitec_options="--ns")
+apps["delite_kmeans"] = App(Delite, "DelitekMeans", "/data/ml/kmeans/mandrill-large.dat /data/ml/kmeans/initmu.dat", configs,
+  runner_class="ppl.apps.ml.kmeans.kmeansRunner")
+apps["delite_rbm"] = App(Delite, "DeliteRBM", "/data/ml/rbm/mnist2000.dat 2000 1000", configs,
+  runner_class="ppl.apps.ml.rbm.RBMRunner")
+apps["delite_svm"] = App(Delite, "DeliteSVM", "/data/ml/svm/MATRIX.TRAIN.100 /data/ml/svm/MATRIX.TEST", configs,
+  runner_class="ppl.apps.ml.svm.SVMRunner")
+apps["delite_naivebayes"] = App(Delite, "DeliteNaiveBayes", "/data/ml/nb/MATRIX.TRAIN.RANDOM.250K /data/ml/nb/MATRIX.TEST", configs,
+  runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
+
+default_apps = [ "gda", "logreg", "kmeans", "rbm", "naivebayes", 
+  "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_naivebayes" ]
+
+default_comparison_plots = [
+  "gda,delite_gda",
+  "logreg,delite_logreg",
+  "kmeans,delite_kmeans",
+  "rbm,delite_rbm",
+  "naivebayes,delite_naivebayes"
+]
+
+
