@@ -14,7 +14,7 @@ Installation
 ============
 
     cd hyperdsl
-    git submodule update -init
+    git submodule update --init
     sbt compile
 
 Updating Existing Repo to Latest Commits
