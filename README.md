@@ -28,11 +28,13 @@ Updating Existing Repo to Latest Commits
 Environment Variables
 ============
 sbt and several other scripts require the following environment variables to be set:
-HYPER_HOME: hyperdsl repository home directory
-LMS_HOME: virtualization-lms-core repository home directory
-DELITE_HOME: Delite repository home directory
-FORGE_HOME: Forge repository home directory
-JAVA_HOME: JDK home directory
+
+    HYPER_HOME: hyperdsl repository home directory
+    LMS_HOME: virtualization-lms-core repository home directory
+    DELITE_HOME: Delite repository home directory
+    FORGE_HOME: Forge repository home directory
+    JAVA_HOME: JDK home directory
+
 init-env.sh contains the sensible defaults for all of these paths except JAVA_HOME
 
 More Information

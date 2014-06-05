@@ -6,7 +6,7 @@ import forge.preprocessor._
 
 object HyperDSLBuild extends Build with ForgePreprocessor {
 
-  System.setProperty("showSuppressedErrors", "false")
+  //System.setProperty("showSuppressedErrors", "true")
 
   val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.2")
   val scalaTest = "org.scalatest" % "scalatest_2.10" % "2.1.2"
