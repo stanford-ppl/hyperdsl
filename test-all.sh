@@ -47,3 +47,10 @@ do
  done
 
 echo "[test-all]: All tests finished!"
+
+echo "[test-all]: Running benchmarks"
+
+benchmark/benchmark.py -v -f
+
+echo "[test-all]: Benchmarks finished!"
+
