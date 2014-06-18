@@ -44,7 +44,7 @@ do
 
     if [ -e "$dest" ]
     then
-      rm -r $dest
+        rm -r $dest
     fi
     mkdir $dest
 
@@ -74,26 +74,39 @@ do
 
     # app src
     mkdir $dest/src/
-    cp -r $src/apps/src/* $dest/src/
+    if [ -e "$src/apps/src/" ]
+    then
+        cp -r $src/apps/src/* $dest/src/
+    else
+        echo "[build-binary]: WARNING: no apps found to include in binary"
+    fi
+    
+    #test src
     mkdir $dest/test-src/
-    cp -r $src/tests/src/* $dest/test-src/
-
+    if [ -e "$src/tests/src/" ]
+    then
+        cp -r $src/tests/src/* $dest/test-src/
+    else
+        echo "[build-binary]: WARNING: no tests found to include in binary"
+    fi
+    
     #### most of the below should be refactored in the sub-repos to be in saner places
 
     # datastruct folders
-    mkdir -p $dest/framework/src/ppl/delite/framework/
-    cp -r $HYPER_HOME/delite/framework/src/ppl/delite/framework/datastruct $dest/framework/src/ppl/delite/framework/
-    mkdir -p $dest/compiler/src/$dsl_lower/compiler/
-    cp -r $src/compiler/src/$dsl_lower/compiler/datastruct $dest/compiler/src/$dsl_lower/compiler/
+    if [ -e "$src/compiler/src/$dsl_lower/compiler/datastruct" ]
+    then
+        mkdir -p $dest/compiler/src/$dsl_lower/compiler/
+        cp -r $src/compiler/src/$dsl_lower/compiler/datastruct $dest/compiler/src/$dsl_lower/compiler/
+    fi
 
     # config
     cp -r $HYPER_HOME/delite/config $dest/
 
     # runtime static
-    mkdir $dest/runtime/
-    for comp in "cuda" "opencl"
+    mkdir -p $dest/runtime/src/static
+    for comp in "cpp" "cuda" "opencl"
     do
-        cp -r $HYPER_HOME/delite/runtime/$comp $dest/runtime/
+        cp -r $HYPER_HOME/delite/runtime/src/static/$comp $dest/runtime/src/static/
     done
 
     # tar and cleanup
