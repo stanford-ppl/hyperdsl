@@ -22,6 +22,9 @@ if [ -z "${FORGE_HOME}" ]; then echo error: FORGE_HOME is not defined; exit $E_B
 # remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
 
+# delite test with GPU
+sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
+
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
 sbt -Dtests.threads=1 -Dtests.targets=scala,cpp "; project tests; test"
@@ -40,7 +43,7 @@ do
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
     echo "[test-all]: running $dsl tests (1 thread)"
-    sbt -Dtests.threads=1 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
+    sbt -Dtests.threads=1 -Dtests.targets=scala,cpp,cuda "; project $dsl-tests; test"
     echo "[test-all]: running $dsl tests (8 threads)"
     sbt -Dtests.threads=8 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
     popd
