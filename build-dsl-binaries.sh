@@ -4,8 +4,8 @@
 # Builds DSL binaries by running Forge and packaging up the binary results in a tarball.
 
 # add new DSLs to package here
-dsls=( "OptiML" )
-runners=( "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" )
+dsls=( "OptiML" "OptiQL" "OptiGraph" "OptiWrangler" )
+runners=( "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" "ppl.dsl.forge.dsls.optiql.OptiQLDSLRunner" "ppl.dsl.forge.dsls.optigraph.OptiGraphDSLRunner" "ppl.dsl.forge.dsls.optiwrangler.OptiWranglerDSLRunner" )
 
 # exit if any part of the script fails
 set -e
