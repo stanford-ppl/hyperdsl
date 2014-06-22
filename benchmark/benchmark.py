@@ -44,10 +44,10 @@ def main():
     if(app.dsl not in dsls):
       dsls.append(app.dsl)
       if(args.verbose):
-        print("notice: identified dsl {0}".format(app.dsl.name))
+        print("notice: identified dsl {0}".format(app.dsl.name), file=sys.stderr)
     apps.append(app)
     if(args.verbose):
-      print("notice: identified app {0}".format(app.name))
+      print("notice: identified app {0}".format(app.name), file=sys.stderr)
 
   # chdir to the hyperdsl root directory
   hyperdsl_root = chdir_hyperdsl_root()
@@ -102,7 +102,7 @@ def main():
     for c in app.configs:
       output_json["apps"][app.name]["configs"].append(c.name)
       if(args.verbose):
-        print("notice: running {0} under configuration {1}".format(app.name, c.name))
+        print("notice: running {0} under configuration {1}".format(app.name, c.name), file=sys.stderr)
       opts = " -Dstats.dump -Dstats.dump.component=app -Dstats.dump.overwrite -Dstats.output.dir={0}/{1} -Dstats.output.filename={2}-{3}.times {4}".format(
         args.directory, git_hash, app.name, c.name, os.getenv("JAVA_OPTS", ""))
       os.putenv("JAVA_OPTS", opts)
@@ -138,7 +138,7 @@ def main():
   output_json["end_time"] = time.time()
   output_json["total_time"] = output_json["end_time"] - output_json["start_time"]
   if(args.verbose):
-    print("notice: ran for {0} seconds".format(output_json["total_time"]))
+    print("notice: ran for {0} seconds".format(output_json["total_time"]), file=sys.stderr)
   json.dump(output_json, open("{0}/{1}.json".format(args.json_directory, git_hash), "w"))
 
 
@@ -153,13 +153,13 @@ def chdir_hyperdsl_root():
     if (os.path.abspath(os.getcwd()) != hyperdsl_root):
       print("error: unable to cd to hyperdsl root directory.", file=sys.stderr)
       exit(-1)
-    print("         directory changed successfully!")
+    print("         directory changed successfully!", file=sys.stderr)
 
   # check that the root of the git repo is equal to the root of the hyperdsl repo
   try:
     git_root = subprocess.check_output("git rev-parse --show-toplevel", shell=True).strip()
     if(git_root != hyperdsl_root):
-      print("error: git root in unexpected location")
+      print("error: git root in unexpected location", file=sys.stderr)
       exit(-1)
   except subprocess.CalledProcessError as e:
     print("error: unable to call git.", file=sys.stderr)
