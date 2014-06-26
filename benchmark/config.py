@@ -59,9 +59,10 @@ class Config(object):
 
 OptiML = Dsl("OptiML")
 OptiQL = Dsl("OptiQL")
+OptiGraph = Dsl("OptiGraph")
 Delite = Dsl("Delite", "delite", "sbt \"; project optiml-apps; compile\"; rm -rf delite/lib_managed; cp -r lib_managed delite")
 
-dsls = [OptiML, Delite]
+dsls = [OptiML, OptiQL ,OptiGraph, Delite]
 
 configs = [ 
   Config.smp(1), Config.smp(2), Config.smp(4), Config.smp(8),
@@ -77,6 +78,9 @@ apps["rbm"] = App(OptiML, "RBM", "/data/ml/rbm/mnist2000.dat 2000 1000", configs
 apps["svm"] = App(OptiML, "SVM", "/data/ml/svm/MATRIX.TRAIN.100 /data/ml/svm/MATRIX.TEST", configs)
 apps["naivebayes"] = App(OptiML, "NaiveBayes", "/data/ml/nb/MATRIX.TRAIN.RANDOM.250K /data/ml/nb/MATRIX.TEST", configs,
   runner_class="NBCompiler")
+apps["query1"] = App(OptiQL, "Query1", "/data/query/SF1", configs)
+apps["pagerank"] = App(OptiGraph, "PageRank", "/data/graph/soc-LiveJournal1.txt /data/graph/prout.txt", configs)
+apps["undirectedtrianglecounting"] = App(OptiGraph, "UndirectedTriangleCounting", "/data/graph/soc-LiveJournal1.txt", configs)
 
 
 apps["delite_gda"] = App(Delite, "DeliteGDA", "/data/ml/gda/1024-1200x.dat /data/ml/gda/q1y.dat", configs,
@@ -91,8 +95,11 @@ apps["delite_svm"] = App(Delite, "DeliteSVM", "/data/ml/svm/MATRIX.TRAIN.100 /da
   runner_class="ppl.apps.ml.svm.SVMRunner")
 apps["delite_naivebayes"] = App(Delite, "DeliteNaiveBayes", "/data/ml/nb/MATRIX.TRAIN.RANDOM.250K /data/ml/nb/MATRIX.TEST", configs,
   runner_class="ppl.apps.ml.nb.NaiveBayesRunner")
+apps["delite_query1"] = App(Delite, "Query1", "/data/query/SF1", configs,
+  runner_class="")
 
 default_apps = [ "gda", "logreg", "kmeans", "rbm", "naivebayes", 
+  "query1","pagerank", "undirectedtrianglecounting", "delite_query1"
   "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_naivebayes" ]
 
 default_comparison_plots = [
@@ -100,7 +107,8 @@ default_comparison_plots = [
   "logreg,delite_logreg",
   "kmeans,delite_kmeans",
   "rbm,delite_rbm",
-  "naivebayes,delite_naivebayes"
+  "naivebayes,delite_naivebayes",
+  "query1,delite_query1"
 ]
 
 
