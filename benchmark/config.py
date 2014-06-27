@@ -99,7 +99,7 @@ apps["delite_query1"] = App(Delite, "Query1", "/data/query/SF1", configs,
   runner_class="")
 
 default_apps = [ "gda", "logreg", "kmeans", "rbm", "naivebayes", 
-  "query1","pagerank", "undirectedtrianglecounting", "delite_query1"
+  "query1","pagerank", "undirectedtrianglecounting", "delite_query1",
   "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_naivebayes" ]
 
 default_comparison_plots = [
