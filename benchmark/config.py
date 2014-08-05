@@ -51,7 +51,7 @@ class Config(object):
 
   @staticmethod
   def cpp(threads):
-    return Config("cpp%d" % threads, "-t 1 --cpp %d" % threads, True)
+    return Config("cpp%d" % threads, "-t 1 --cpp %d" % threads)
 
   @staticmethod
   def gpu():
