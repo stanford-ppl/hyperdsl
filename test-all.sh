@@ -30,11 +30,11 @@ rm -rf $DELITE_HOME/generatedCache
 
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests"
-sbt -Dtests.threads=1,7 -Dtests.targets=scala,cpp "; project tests; test"
+sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 
 # delite test with GPU
 echo "[test-all]: running Delite Cuda tests"
-sbt -Dtests.threads=1,7 -Dtests.targets=cuda "; project delite-test; test"
+sbt -Dtests.threads=1,19 -Dtests.targets=cuda "; project delite-test; test"
 
 # all Forge DSL tests
 echo "[test-all]: running Forge DSL tests"
@@ -46,7 +46,7 @@ do
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
     echo "[test-all]: running $dsl tests"
-    sbt -Dtests.threads=1,7 -Dtests.targets=scala,cpp,cuda "; project $dsl-tests; test"
+    sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp,cuda "; project $dsl-tests; test"
     popd
  done
 
