@@ -48,7 +48,7 @@ do
     echo "[test-all]: running $dsl tests"
     sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp,cuda "; project $dsl-tests; test"
     popd
- done
+done
 
 echo "[test-all]: All tests finished!"
 
