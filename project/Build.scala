@@ -6,7 +6,7 @@ import forge.preprocessor._
 
 object HyperDSLBuild extends Build with ForgePreprocessor {
 
-  System.setProperty("showSuppressedErrors", "false")
+  if (System.getProperty("showSuppressedErrors") == null) System.setProperty("showSuppressedErrors", "false")
 
   val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.2")
   val scalaTest = "org.scalatest" % "scalatest_2.10" % "2.1.2"
@@ -20,9 +20,12 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
     libraryDependencies += scalaTest,
 
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
-    libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.4.1",
-    libraryDependencies += "org.apache.mesos" % "mesos" % "0.9.0-incubating",
+    libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.5.0",
+    libraryDependencies += "org.apache.mesos" % "mesos" % "0.20.1",
     libraryDependencies += "org.apache.hadoop" % "hadoop-core" % "1.2.0",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.5.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.5.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.5.1",
 
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
