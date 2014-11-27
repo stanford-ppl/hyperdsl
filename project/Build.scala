@@ -65,6 +65,5 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
   lazy val forge = Project("forge", file("forge"), settings = forgeBuildSettings) dependsOn(lms) // additional settings are picked up in build.sbt of submodule
 
   // include all projects that should be built (dependsOn) and tested (aggregate)
-  lazy val tests = (Project("tests", file("project/boot"), settings = deliteBuildSettings)
-    dependsOn(optiqlApps) aggregate(framework, deliteTest, optiql))
+  lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(framework, deliteTest, dsls, apps)
 }
