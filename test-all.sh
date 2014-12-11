@@ -29,16 +29,15 @@ if [ ! -f "${DELITE_HOME}/config/delite/cuBLAS.xml" ]; then echo error: cuBLAS.x
 rm -rf $DELITE_HOME/generatedCache
 
 # all non-Forge tests
-echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
-sbt -Dtests.threads=1 -Dtests.targets=scala,cpp "; project tests; test"
-
-# and again multi-threaded
-echo "[test-all]: running Delite and Delite DSL tests (8 threads)"
-sbt -Dtests.threads=8 -Dtests.targets=scala,cpp "; project tests; test"
+echo "[test-all]: running Delite and Delite DSL tests"
+sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 
 # delite test with GPU
-echo "[test-all]: running Delite Cuda tests"
-sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
+if [ "$1" != "--no-cuda" ]
+then
+	echo "[test-all]: running Delite Cuda tests"
+	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
+fi
 
 # all Forge DSL tests
 echo "[test-all]: running Forge DSL tests"
@@ -49,12 +48,15 @@ do
     dsl=${dsls[$i]} 
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
-    echo "[test-all]: running $dsl tests (1 thread)"
-    sbt -Dtests.threads=1 -Dtests.targets=scala,cpp,cuda "; project $dsl-tests; test"
-    echo "[test-all]: running $dsl tests (8 threads)"
-    sbt -Dtests.threads=8 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
+    echo "[test-all]: running $dsl tests"
+    sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
+    if [ "$1" != "--no-cuda" ]
+	then
+    	echo "[test-all]: running $dsl tests (Cuda)"
+    	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project $dsl-tests; test"
+    fi
     popd
- done
+done
 
 echo "[test-all]: All tests finished!"
 
