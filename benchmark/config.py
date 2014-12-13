@@ -78,6 +78,7 @@ apps["rbm"] = App(OptiML, "RBM", "/data/ml/rbm/mnist2000.dat 2000 1000", configs
 apps["svm"] = App(OptiML, "SVM", "/data/ml/svm/MATRIX.TRAIN.100 /data/ml/svm/MATRIX.TEST", configs)
 apps["naivebayes"] = App(OptiML, "NaiveBayes", "/data/ml/nb/MATRIX.TRAIN.RANDOM.250K /data/ml/nb/MATRIX.TEST", configs,
   runner_class="NBCompiler")
+apps["convnet"] = App(OptiML, "mnist_tutorial", configs)
 apps["query1"] = App(OptiQL, "TPCHQ1", "/data/query/SF1", configs)
 apps["query6"] = App(OptiQL, "TPCHQ6", "/data/query/SF1", configs)
 apps["query14"] = App(OptiQL, "TPCHQ14", "/data/query/SF1", configs)
@@ -101,9 +102,9 @@ apps["delite_query1"] = App(Delite, "DeliteTPCHQ1", "/data/query/SF1", configs,
   runner_class="ppl.apps.dataquery.tpch.TPCHQ1")
 
 default_apps = [ 
-  "gda", "logreg", "kmeans", "rbm", "naivebayes", 
+  "gda", "logreg", "kmeans", "rbm", "naivebayes", "convnet",
   "query1", "query6", "query14", "pagerank", "undirectedtrianglecounting", 
-  "delite_query1", "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_naivebayes" 
+  "delite_query1", "delite_gda", "delite_logreg", "delite_kmeans", "delite_rbm", "delite_naivebayes"
 ]
 
 default_comparison_plots = [

@@ -28,6 +28,18 @@ if [ ! -f "${DELITE_HOME}/config/delite/cuBLAS.xml" ]; then echo error: cuBLAS.x
 # remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
 
+# Generate a neural network for testing
+cd ${FORGE_HOME}/apps/OptiML/src/NeuralNetwork/
+sed -i 's/apps\/src\/NeuralNetwork\/examples\/mnist/\/data\/ml\/nnet\/mnist_small/' mnist.xml
+python generate_cnn.py mnist.xml
+# Modify the parameters
+cd mnist_tutorial/
+sed -i 's/10\ \;\ Num\ epochs\ between\ testing\ on\ validation\ set/1\ \;\ Num\ epochs\ between\ testing\ on\ validation\ set/' global_params.txt
+sed -i 's/1000\ \;\ Test\ mini-batch\ size,\ validation\ set/100\ \;\ Test\ mini-batch\ size,\ validation\ set/' global_params.txt
+sed -i 's/100\ \;\ Mini-Batch\ size/40\ \;\ Mini-Batch\ size/' global_params.txt
+sed -i 's/0.01\ \;\ Learning\ Rate/0.05\ \;\ Learning\ Rate/' layer_*_params.txt
+cd ${HYPER_HOME}
+
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests (1 thread)"
 sbt -Dtests.threads=1 -Dtests.targets=scala,cpp "; project tests; test"
