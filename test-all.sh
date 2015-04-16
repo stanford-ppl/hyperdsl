@@ -9,7 +9,7 @@ dsls=( "SimpleVector" "OptiML" "OptiQL" "OptiGraph" "OptiWrangler" )
 runners=( "ppl.dsl.forge.examples.SimpleVectorDSLRunner" "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" "ppl.dsl.forge.dsls.optiql.OptiQLDSLRunner" "ppl.dsl.forge.dsls.optigraph.OptiGraphDSLRunner" "ppl.dsl.forge.dsls.optiwrangler.OptiWranglerDSLRunner" )
 
 # exit if any part of the script fails
-set -e
+if [ "$1" != "--no-benchmarks" ]; then set -e; fi
 
 E_BADENV=65
 
@@ -19,22 +19,21 @@ if [ -z "${LMS_HOME}" ]; then echo error: LMS_HOME is not defined; exit $E_BADEN
 if [ -z "${DELITE_HOME}" ]; then echo error: DELITE_HOME is not defined; exit $E_BADENV; fi
 if [ -z "${FORGE_HOME}" ]; then echo error: FORGE_HOME is not defined; exit $E_BADENV; fi
 
-# check for required configuration files
+#check for required configuration files
 if [ ! -f "${DELITE_HOME}/config/delite/CPP.xml" ]; then echo error: CPP.xml is not present; exit $E_BADENV; fi
 if [ ! -f "${DELITE_HOME}/config/delite/BLAS.xml" ]; then echo error: BLAS.xml is not present; exit $E_BADENV; fi
 if [ ! -f "${DELITE_HOME}/config/delite/CUDA.xml" ]; then echo error: CUDA.xml is not present; exit $E_BADENV; fi
 if [ ! -f "${DELITE_HOME}/config/delite/cuBLAS.xml" ]; then echo error: cuBLAS.xml is not present; exit $E_BADENV; fi
 
-# remove previous delite runtime cache
+#remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
 
-# all non-Forge tests
+#all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests"
 sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 
 # delite test with GPU
-if [ "$1" != "--no-cuda" ]
-then
+if [ "$1" != "--no-cuda" ]; then
 	echo "[test-all]: running Delite Cuda tests"
 	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
 fi
@@ -50,8 +49,7 @@ do
     cd published/$dsl/
     echo "[test-all]: running $dsl tests"
     sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
-    if [ "$1" != "--no-cuda" ]
-	then
+    if [ "$1" != "--no-cuda" ]; then
     	echo "[test-all]: running $dsl tests (Cuda)"
     	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project $dsl-tests; test"
     fi
@@ -60,9 +58,8 @@ done
 
 echo "[test-all]: All tests finished!"
 
-echo "[test-all]: Running benchmarks"
-
-benchmark/benchmark.py -v -f
-
-echo "[test-all]: Benchmarks finished!"
-
+if [ "$1" != "--no-benchmarks" ]; then
+	echo "[test-all]: Running benchmarks"
+	benchmark/benchmark.py -v -f
+	echo "[test-all]: Benchmarks finished!"
+fi
