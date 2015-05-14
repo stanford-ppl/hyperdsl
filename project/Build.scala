@@ -25,6 +25,7 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
     libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.5.1",
     libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.5.1",
     libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.5.1",
+	libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.8.7",
 
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
