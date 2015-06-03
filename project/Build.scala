@@ -8,15 +8,16 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   if (System.getProperty("showSuppressedErrors") == null) System.setProperty("showSuppressedErrors", "false")
 
-  val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.2")
-  val scalaTest = "org.scalatest" % "scalatest_2.10" % "2.1.2"
+  val scalaOrg = "org.scala-lang.virtualized"
+  val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.11.2")
+  val scalaTest = "org.scalatest" % "scalatest_2.11" % "2.2.2"
   val virtBuildSettingsBase = Defaults.defaultSettings ++ Seq(
     organization := "stanford-ppl",
-    scalaOrganization := "org.scala-lang.virtualized",
+    scalaOrganization := scalaOrg,
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-library" % virtScala,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-compiler" % virtScala,
+    libraryDependencies += scalaOrg % "scala-library" % virtScala,
+    libraryDependencies += scalaOrg % "scala-compiler" % virtScala,
     libraryDependencies += scalaTest,
 
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
@@ -64,6 +65,6 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   lazy val forge = Project("forge", file("forge"), settings = forgeBuildSettings) dependsOn(lms) // additional settings are picked up in build.sbt of submodule
 
-  // include all projects that should be built (dependsOn) and tested (aggregate)
+  // include all projects that should be built and tested in 'aggregate'
   lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(framework, deliteTest, dsls, apps)
 }
