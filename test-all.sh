@@ -9,7 +9,7 @@ dsls=( "SimpleVector" "OptiML" "OptiQL" "OptiGraph" "OptiWrangler" )
 runners=( "ppl.dsl.forge.examples.SimpleVectorDSLRunner" "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" "ppl.dsl.forge.dsls.optiql.OptiQLDSLRunner" "ppl.dsl.forge.dsls.optigraph.OptiGraphDSLRunner" "ppl.dsl.forge.dsls.optiwrangler.OptiWranglerDSLRunner" )
 
 # exit if any part of the script fails
-set -e
+if [ "$1" != "--no-benchmarks" ]; then set -e; fi
 
 E_BADENV=65
 
@@ -31,12 +31,13 @@ rm -rf $DELITE_HOME/generatedCache
 # all non-Forge tests
 echo "[test-all]: running Delite and Delite DSL tests"
 sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
+(( st = st || $? ))
 
 # delite test with GPU
-if [ "$1" != "--no-cuda" ]
-then
+if [ "$1" != "--no-cuda" ]; then
 	echo "[test-all]: running Delite Cuda tests"
 	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
+	(( st = st || $? ))
 fi
 
 # all Forge DSL tests
@@ -50,19 +51,22 @@ do
     cd published/$dsl/
     echo "[test-all]: running $dsl tests"
     sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
-    if [ "$1" != "--no-cuda" ]
-	then
+    (( st = st || $? ))
+    if [ "$1" != "--no-cuda" ]; then
     	echo "[test-all]: running $dsl tests (Cuda)"
     	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project $dsl-tests; test"
+    	(( st = st || $? ))
     fi
     popd
 done
 
 echo "[test-all]: All tests finished!"
 
-echo "[test-all]: Running benchmarks"
+if [ "$1" != "--no-benchmarks" ]; then
+	echo "[test-all]: Running benchmarks"
+	benchmark/benchmark.py -v -f
+	(( st = st || $? ))
+	echo "[test-all]: Benchmarks finished!"
+fi
 
-benchmark/benchmark.py -v -f
-
-echo "[test-all]: Benchmarks finished!"
-
+exit $st
