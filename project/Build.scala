@@ -57,13 +57,11 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
   lazy val framework = Project("framework", file("delite/framework"), settings = deliteBuildSettings) dependsOn(runtime, lms) // dependency on runtime because of Scopes
   lazy val deliteTest = Project("delite-test", file("delite/framework/delite-test"), settings = deliteBuildSettings) dependsOn(framework, runtime)
 
-  lazy val dsls = Project("dsls", file("delite/dsls"), settings = deliteBuildSettings) dependsOn(framework) //aggregate(optiql)
-  //lazy val optiql = Project("optiql", file("delite/dsls/optiql"), settings = deliteBuildSettings) dependsOn(framework, deliteTest)
-  //lazy val smal = Project("smal", file("delite/dsls/smal"), settings = deliteBuildSettings) dependsOn(dsls)
+  lazy val dsls = Project("dsls", file("delite/dsls"), settings = deliteBuildSettings) aggregate(optiql)
+  lazy val optiql = Project("optiql", file("delite/dsls/optiql"), settings = deliteBuildSettings) dependsOn(framework, deliteTest)
 
-  lazy val apps = Project("apps", file("delite/apps"), settings = deliteBuildSettings) //aggregate(smalApps) //aggregate(optiqlApps)
-  //lazy val optiqlApps = Project("optiql-apps", file("delite/apps/optiql"), settings = deliteBuildSettings) dependsOn(optiql)
-  //lazy val smalApps = Project("smal-apps", file("delite/apps/smal"), settings = deliteBuildSettings) dependsOn(smal)
+  lazy val apps = Project("apps", file("delite/apps"), settings = deliteBuildSettings) aggregate(optiqlApps)
+  lazy val optiqlApps = Project("optiql-apps", file("delite/apps/optiql"), settings = deliteBuildSettings) dependsOn(optiql)
 
   lazy val runtime = Project("runtime", file("delite/runtime"), settings = deliteBuildSettings)
 
@@ -71,7 +69,4 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   // include all projects that should be built and tested in 'aggregate'
   lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(runtime, framework, deliteTest, dsls, apps)
-
-  lazy val asplos = Project("asplos", file("delite/asplos"), settings = deliteBuildSettings) dependsOn(framework, lms)
-  lazy val asplosApps = Project("asplos-apps", file("delite/asplos/apps"), settings = deliteBuildSettings) dependsOn(asplos)
 }
