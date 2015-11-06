@@ -7,7 +7,7 @@ object HUMAN_DSL_NAMEBuild extends Build {
 
   val virtBuildSettingsBase = Project.defaultSettings ++ Seq(
     organization := "stanford-ppl",
-    scalaOrganization := "org.scala-lang.virtualized",
+    scalaOrganization := "org.scala-lang.FIXME" //virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
     libraryDependencies += "org.scala-lang.virtualized" % "scala-library" % virtScala,
