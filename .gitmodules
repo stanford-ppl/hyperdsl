@@ -1,9 +1,12 @@
 [submodule "virtualization-lms-core"]
 	path = virtualization-lms-core
-	url = https://github.com/TiarkRompf/virtualization-lms-core.git
+	url = https://github.com/DeliteEPFL/virtualization-lms-core.git
 [submodule "delite"]
 	path = delite
-	url = https://github.com/stanford-ppl/Delite.git
+	url = https://github.com/DeliteEPFL/Delite.git
 [submodule "forge"]
 	path = forge
-	url = https://github.com/stanford-ppl/Forge.git
+	url = https://github.com/DeliteEPFL/Forge.git
+[submodule "virtualization"]
+	path = virtualization
+	url = https://github.com/DeliteEPFL/summer-of-lms-2014.git
