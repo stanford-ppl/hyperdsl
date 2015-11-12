@@ -60,7 +60,7 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
   // lazy val hyperdsl = Project("hyperdsl", file("."),
   //   settings = deliteBuildSettings) aggregate(virtualization , lms, framework, runtime, deliteTest, forge)
 
-  lazy val hyperdslus = Project("hyperdslus", file("."), settings = deliteBuildSettings) aggregate(virtualization, lms, framework, runtime, deliteTest) //, forge)
+  lazy val hyperdslus = Project("hyperdsl-us", file("."), settings = deliteBuildSettings) aggregate(virtualization, lms, framework, runtime, deliteTest) //, forge)
 
   // additional settings are picked up in build.sbt of submodule
 
@@ -72,16 +72,16 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
   
   lazy val deliteTest = Project("delite-test", file("delite/framework/delite-test"), settings = deliteBuildSettings) dependsOn(framework, runtime)
 
-  // lazy val dsls = Project("dsls", file("delite/dsls"), settings = deliteBuildSettings) aggregate(optiql)
-  // lazy val optiql = Project("optiql", file("delite/dsls/optiql"), settings = deliteBuildSettings) dependsOn(framework, deliteTest)
+  lazy val dsls = Project("dsls", file("delite/dsls"), settings = deliteBuildSettings) aggregate(optiql)
+  lazy val optiql = Project("optiql", file("delite/dsls/optiql"), settings = deliteBuildSettings) dependsOn(framework, deliteTest)
 
-  // lazy val apps = Project("apps", file("delite/apps"), settings = deliteBuildSettings) aggregate(optiqlApps)
-  // lazy val optiqlApps = Project("optiql-apps", file("delite/apps/optiql"), settings = deliteBuildSettings) dependsOn(optiql)
+  lazy val apps = Project("apps", file("delite/apps"), settings = deliteBuildSettings) aggregate(optiqlApps)
+  lazy val optiqlApps = Project("optiql-apps", file("delite/apps/optiql"), settings = deliteBuildSettings) dependsOn(optiql)
 
   
 
-  // lazy val forge = Project("forge", file("forge"), settings = forgeBuildSettings) dependsOn(lms) // additional settings are picked up in build.sbt of submodule
+  lazy val forge = Project("forge", file("forge"), settings = forgeBuildSettings) dependsOn(lms) // additional settings are picked up in build.sbt of submodule
 
   // include all projects that should be built (dependsOn) and tested (aggregate)
-  // lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(framework, deliteTest, dsls, apps)
+  lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(framework, deliteTest, dsls, apps)
 }
