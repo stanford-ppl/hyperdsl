@@ -24,9 +24,9 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.5.0",
     libraryDependencies += "org.apache.mesos" % "mesos" % "0.20.1",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.5.1",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.5.1",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.5.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.7.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.7.1",
     libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.8.7",
 
     retrieveManaged := true,
