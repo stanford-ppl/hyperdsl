@@ -57,15 +57,16 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   // build targets
   //root directory makes this the default project
-  lazy val hyperdsl = Project("hyperdsl", file("."), settings = deliteBuildSettings) aggregate(virtualization, lms, framework, runtime, deliteTest, forge)
+  lazy val hyperdsl = Project("hyperdsl", file("."), settings = deliteBuildSettings) aggregate(virtualization, lms, framework, runtime, deliteTest, forge) //, yinyang, yy_paradise)
 
   // additional settings are picked up in build.sbt of submodule
 
   lazy val virtualization = Project("virtualization", file("summer-of-lms-2014"))
   lazy val lms = Project("lms", file("virtualization-lms-core")) dependsOn(virtualization)
   
+
   lazy val runtime = Project("runtime", file("delite/runtime"), settings = deliteBuildSettings)
-  lazy val framework = Project("framework", file("delite/framework"), settings = deliteBuildSettings) dependsOn(virtualization , runtime, lms) // dependency on runtime because of Scopes
+  lazy val framework = Project("framework", file("delite/framework"), settings = deliteBuildSettings) dependsOn(virtualization , runtime, lms) // dependency on runtime because of Scopes?
   
   lazy val deliteTest = Project("delite-test", file("delite/framework/delite-test"), settings = deliteBuildSettings) dependsOn(framework, runtime)
 

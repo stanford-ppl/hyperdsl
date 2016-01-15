@@ -10,8 +10,8 @@ object HUMAN_DSL_NAMEBuild extends Build {
     scalaOrganization := "org.scala-lang" //.virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-library" % virtScala,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-compiler" % virtScala,
+    libraryDependencies += "org.scala-lang" % "scala-library" % virtScala, //.virtualized
+    libraryDependencies += "org.scala-lang" % "scala-compiler" % virtScala, //.virtualized
     libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.2",
     
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
