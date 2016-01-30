@@ -10,3 +10,9 @@
 [submodule "virtualization"]
 	path = virtualization
 	url = https://github.com/DeliteEPFL/summer-of-lms-2014.git
+[submodule "yinyang"]
+	path = yinyang-vojin
+	url = https://github.com/DeliteEPFL/scala-yinyang.git
+[submodule "scala-records"]
+	path = scala-records
+	url = https://github.com/DeliteEPFL/scala-records.git
