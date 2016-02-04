@@ -8,7 +8,7 @@
 	path = forge
 	url = https://github.com/DeliteEPFL/Forge.git
 [submodule "virtualization"]
-	path = virtualization
+	path = summer-of-lms-2014
 	url = https://github.com/DeliteEPFL/summer-of-lms-2014.git
 [submodule "scala-records"]
 	path = scala-records
@@ -16,3 +16,6 @@
 [submodule "yinyang"]
 	path = yinyang-vojin
 	url = https://github.com/DeliteEPFL/scala-yinyang.git
+[submodule "macro-virtualization"]
+	path = summer-of-lms-2014
+	url = https://github.com/DeliteEPFL/summer-of-lms-2014.git
