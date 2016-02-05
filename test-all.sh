@@ -99,7 +99,7 @@ done
 
 echoinfo "All tests finished!"
 
-if [ "$1" != "--no-benchmarks" ]; then
+if listcontains "$@" --benchmarks; then
 	echoinfo "Running benchmarks"
 	benchmark/benchmark.py -v -f
 	(( st = st || $? ))
