@@ -27,11 +27,16 @@ runners=(
 
 E_BADENV=65
 
+echoerr() { echo "error: $@" 1>&2; } # 1>&2 redirects stdout to stderr
+env_var_error() {
+    echoerr "$1 environment variable is not defined. Please set it to the appropriate project root directory or run 'source init-env.sh'";
+    exit $E_BADENV;
+}
 # check for required env variables
-if [ -z "${HYPER_HOME}" ]; then echo error: HYPER_HOME is not defined; exit $E_BADENV; fi
-if [ -z "${LMS_HOME}" ]; then echo error: LMS_HOME is not defined; exit $E_BADENV; fi
-if [ -z "${DELITE_HOME}" ]; then echo error: DELITE_HOME is not defined; exit $E_BADENV; fi
-if [ -z "${FORGE_HOME}" ]; then echo error: FORGE_HOME is not defined; exit $E_BADENV; fi
+if [ -z "${HYPER_HOME}" ]; then env_var_error HYPER_HOME; fi
+if [ -z "${LMS_HOME}" ]; then env_var_error LMS_HOME; fi
+if [ -z "${DELITE_HOME}" ]; then env_var_error DELITE_HOME; fi
+if [ -z "${FORGE_HOME}" ]; then env_var_error FORGE_HOME; fi
 
 # check for required configuration files
 if [ ! -f "${DELITE_HOME}/config/delite/CPP.xml" ]; then echo error: CPP.xml is not present; exit $E_BADENV; fi
