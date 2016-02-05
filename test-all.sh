@@ -59,9 +59,15 @@ echo "[test-all]: running Delite and Delite DSL tests"
 sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 (( st = st || $? ))
 
+listcontains() {
+  for elem in $1; do
+    [[ $elem = $2 ]] && return 0
+  done
+  return 1
+}
 # delite test with GPU
-if [ "$1" != "--no-cuda" ]; then
-	echo "[test-all]: running Delite Cuda tests"
+if listcontains "$@" --cuda; then
+	echo "[test-all]: running Delite CUDA tests"
 	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
 	(( st = st || $? ))
 fi
@@ -78,8 +84,8 @@ do
     echo "[test-all]: running $dsl tests"
     sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
     (( st = st || $? ))
-    if [ "$1" != "--no-cuda" ]; then
-    	echo "[test-all]: running $dsl tests (Cuda)"
+    if listcontains "$@" --cuda; then
+    	echo "[test-all]: running $dsl tests (CUDA)"
     	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project $dsl-tests; test"
     	(( st = st || $? ))
     fi
