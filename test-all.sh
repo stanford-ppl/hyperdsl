@@ -27,7 +27,9 @@ runners=(
 
 E_BADENV=65
 
-echoerr() { echo "error: $@" 1>&2; } # 1>&2 redirects stdout to stderr
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+echoerr() { echo -e "[${RED}error${NC}]: $@" 1>&2; } # 1>&2 redirects stdout to stderr. -e enables escape sequences (to read color)
 env_var_error() {
     echoerr "$1 environment variable is not defined. Please set it to the appropriate project root directory or run 'source init-env.sh'";
     exit $E_BADENV;
