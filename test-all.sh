@@ -30,6 +30,7 @@ E_BADENV=65
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 echoerr() { echo -e "[${RED}error${NC}]: $@" 1>&2; } # 1>&2 redirects stdout to stderr. -e enables escape sequences (to read color)
+echoinfo() { echo "[test-all]: $@"; } # test-all info
 env_var_error() {
     echoerr "$1 environment variable is not defined. Please set it to the appropriate project root directory or run 'source init-env.sh'";
     exit $E_BADENV;
@@ -66,43 +67,43 @@ fi
 rm -rf $DELITE_HOME/generatedCache
 
 # run all built-in Delite tests (non-Forge tests)
-echo "[test-all]: running Delite and Delite DSL tests"
+echoinfo "running Delite and Delite DSL tests"
 sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 (( st = st || $? ))
 
 # run delite test with GPU
 if listcontains "$@" --cuda; then
-	echo "[test-all]: running Delite CUDA tests"
+	echoinfo "running Delite CUDA tests"
 	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
 	(( st = st || $? ))
 fi
 
 # run all Forge DSL tests
-echo "[test-all]: running Forge DSL tests"
+echoinfo "running Forge DSL tests"
 for i in `seq 0 $((${#dsls[@]}-1))` 
 do  
     pushd .
     dsl=${dsls[$i]} 
     $FORGE_HOME/bin/update ${runners[$i]} $dsl 
     cd published/$dsl/
-    echo "[test-all]: running $dsl tests"
+    echoinfo "running $dsl tests"
     sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project $dsl-tests; test"
     (( st = st || $? ))
     if listcontains "$@" --cuda; then
-    	echo "[test-all]: running $dsl tests (CUDA)"
+    	echoinfo "running $dsl tests (CUDA)"
     	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project $dsl-tests; test"
     	(( st = st || $? ))
     fi
     popd
 done
 
-echo "[test-all]: All tests finished!"
+echoinfo "All tests finished!"
 
 if [ "$1" != "--no-benchmarks" ]; then
-	echo "[test-all]: Running benchmarks"
+	echoinfo "Running benchmarks"
 	benchmark/benchmark.py -v -f
 	(( st = st || $? ))
-	echo "[test-all]: Benchmarks finished!"
+	echoinfo "Benchmarks finished!"
 fi
 
 exit $st
