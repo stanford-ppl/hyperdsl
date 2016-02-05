@@ -8,23 +8,26 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   if (System.getProperty("showSuppressedErrors") == null) System.setProperty("showSuppressedErrors", "false")
 
-  val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.10.2")
-  val scalaTest = "org.scalatest" % "scalatest_2.10" % "2.1.2"
+  val virtScala = Option(System.getenv("SCALA_VIRTUALIZED_VERSION")).getOrElse("2.11.2")
+  val scalaTest = "org.scalatest" % "scalatest_2.11" % "2.2.2"
   val virtBuildSettingsBase = Defaults.defaultSettings ++ Seq(
     organization := "stanford-ppl",
     scalaOrganization := "org.scala-lang.virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-library" % virtScala,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-compiler" % virtScala,
+    
+    //normal scala for the runtime and compiling generated code
+    libraryDependencies += "org.scala-lang" % "scala-library" % virtScala, 
+    libraryDependencies += "org.scala-lang" % "scala-compiler" % virtScala,
     libraryDependencies += scalaTest,
 
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
     libraryDependencies += "com.google.protobuf" % "protobuf-java" % "2.5.0",
     libraryDependencies += "org.apache.mesos" % "mesos" % "0.20.1",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.5.1",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.5.1",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.5.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.7.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.1",
+    libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.7.1",
+    libraryDependencies += "org.xerial" % "sqlite-jdbc" % "3.8.7",
 
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
@@ -64,6 +67,6 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   lazy val forge = Project("forge", file("forge"), settings = forgeBuildSettings) dependsOn(lms) // additional settings are picked up in build.sbt of submodule
 
-  // include all projects that should be built (dependsOn) and tested (aggregate)
-  lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(framework, deliteTest, dsls, apps)
+  // include all projects that should be built and tested in 'aggregate'
+  lazy val tests = Project("tests", file("project/boot"), settings = deliteBuildSettings) aggregate(runtime, framework, deliteTest, dsls, apps)
 }
