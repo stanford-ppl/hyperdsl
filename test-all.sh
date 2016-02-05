@@ -38,11 +38,15 @@ if [ -z "${LMS_HOME}" ]; then env_var_error LMS_HOME; fi
 if [ -z "${DELITE_HOME}" ]; then env_var_error DELITE_HOME; fi
 if [ -z "${FORGE_HOME}" ]; then env_var_error FORGE_HOME; fi
 
+config_file_error() {
+    echoerr "$1 is not present. Check ${DELITE_HOME}/config/delite/ for a configuration for your platform";
+    exit $E_BADENV;
+}
 # check for required configuration files
-if [ ! -f "${DELITE_HOME}/config/delite/CPP.xml" ]; then echo error: CPP.xml is not present; exit $E_BADENV; fi
-if [ ! -f "${DELITE_HOME}/config/delite/BLAS.xml" ]; then echo error: BLAS.xml is not present; exit $E_BADENV; fi
-if [ ! -f "${DELITE_HOME}/config/delite/CUDA.xml" ]; then echo error: CUDA.xml is not present; exit $E_BADENV; fi
-if [ ! -f "${DELITE_HOME}/config/delite/cuBLAS.xml" ]; then echo error: cuBLAS.xml is not present; exit $E_BADENV; fi
+if [ ! -f "${DELITE_HOME}/config/delite/CPP.xml" ]; then config_file_error CPP.xml; fi
+if [ ! -f "${DELITE_HOME}/config/delite/BLAS.xml" ]; then config_file_error BLAS.xml; fi
+if [ ! -f "${DELITE_HOME}/config/delite/CUDA.xml" ]; then config_file_error CUDA.xml; fi
+if [ ! -f "${DELITE_HOME}/config/delite/cuBLAS.xml" ]; then config_file_error cuBLAS.xml; fi
 
 # remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
