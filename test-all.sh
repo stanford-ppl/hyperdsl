@@ -45,11 +45,19 @@ config_file_error() {
 check_config_file() {
     if [ ! -f "${DELITE_HOME}/config/delite/$1" ]; then config_file_error $1; fi
 }
+listcontains() {
+  for elem in $1; do
+    [[ $elem = $2 ]] && return 0
+  done
+  return 1
+}
 # check for required configuration files
 check_config_file CPP.xml
 check_config_file BLAS.xml
-check_config_file CUDA.xml
-check_config_file cuBLAS.xml
+if listcontains "$@" --cuda; then
+    check_config_file CUDA.xml
+    check_config_file cuBLAS.xml
+fi
 
 # remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
@@ -59,12 +67,7 @@ echo "[test-all]: running Delite and Delite DSL tests"
 sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 (( st = st || $? ))
 
-listcontains() {
-  for elem in $1; do
-    [[ $elem = $2 ]] && return 0
-  done
-  return 1
-}
+
 # delite test with GPU
 if listcontains "$@" --cuda; then
 	echo "[test-all]: running Delite CUDA tests"
