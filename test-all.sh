@@ -42,11 +42,14 @@ config_file_error() {
     echoerr "$1 is not present. Check ${DELITE_HOME}/config/delite/ for a configuration for your platform";
     exit $E_BADENV;
 }
+check_config_file() {
+    if [ ! -f "${DELITE_HOME}/config/delite/$1" ]; then config_file_error $1; fi
+}
 # check for required configuration files
-if [ ! -f "${DELITE_HOME}/config/delite/CPP.xml" ]; then config_file_error CPP.xml; fi
-if [ ! -f "${DELITE_HOME}/config/delite/BLAS.xml" ]; then config_file_error BLAS.xml; fi
-if [ ! -f "${DELITE_HOME}/config/delite/CUDA.xml" ]; then config_file_error CUDA.xml; fi
-if [ ! -f "${DELITE_HOME}/config/delite/cuBLAS.xml" ]; then config_file_error cuBLAS.xml; fi
+check_config_file CPP.xml
+check_config_file BLAS.xml
+check_config_file CUDA.xml
+check_config_file cuBLAS.xml
 
 # remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
