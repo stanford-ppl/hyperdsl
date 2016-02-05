@@ -34,12 +34,6 @@ env_var_error() {
     echoerr "$1 environment variable is not defined. Please set it to the appropriate project root directory or run 'source init-env.sh'";
     exit $E_BADENV;
 }
-# check for required env variables
-if [ -z "${HYPER_HOME}" ]; then env_var_error HYPER_HOME; fi
-if [ -z "${LMS_HOME}" ]; then env_var_error LMS_HOME; fi
-if [ -z "${DELITE_HOME}" ]; then env_var_error DELITE_HOME; fi
-if [ -z "${FORGE_HOME}" ]; then env_var_error FORGE_HOME; fi
-
 config_file_error() {
     echoerr "$1 is not present. Check ${DELITE_HOME}/config/delite/ for a configuration for your platform";
     exit $E_BADENV;
@@ -53,6 +47,13 @@ listcontains() {
   done
   return 1
 }
+
+# check for required env variables
+if [ -z "${HYPER_HOME}" ]; then env_var_error HYPER_HOME; fi
+if [ -z "${LMS_HOME}" ]; then env_var_error LMS_HOME; fi
+if [ -z "${DELITE_HOME}" ]; then env_var_error DELITE_HOME; fi
+if [ -z "${FORGE_HOME}" ]; then env_var_error FORGE_HOME; fi
+
 # check for required configuration files
 check_config_file CPP.xml
 check_config_file BLAS.xml
@@ -64,22 +65,20 @@ fi
 # remove previous delite runtime cache
 rm -rf $DELITE_HOME/generatedCache
 
-# all non-Forge tests
+# run all built-in Delite tests (non-Forge tests)
 echo "[test-all]: running Delite and Delite DSL tests"
 sbt -Dtests.threads=1,19 -Dtests.targets=scala,cpp "; project tests; test"
 (( st = st || $? ))
 
-
-# delite test with GPU
+# run delite test with GPU
 if listcontains "$@" --cuda; then
 	echo "[test-all]: running Delite CUDA tests"
 	sbt -Dtests.threads=1 -Dtests.targets=cuda "; project delite-test; test"
 	(( st = st || $? ))
 fi
 
-# all Forge DSL tests
+# run all Forge DSL tests
 echo "[test-all]: running Forge DSL tests"
-
 for i in `seq 0 $((${#dsls[@]}-1))` 
 do  
     pushd .
