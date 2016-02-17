@@ -16,6 +16,3 @@
 [submodule "yinyang"]
 	path = yinyang-vojin
 	url = https://github.com/DeliteEPFL/scala-yinyang.git
-[submodule "macro-virtualization"]
-	path = summer-of-lms-2014
-	url = https://github.com/DeliteEPFL/summer-of-lms-2014.git
