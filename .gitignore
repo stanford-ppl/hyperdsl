@@ -3,6 +3,8 @@
 *.ipr
 *.iws
 *.idea
+*.swp
+*.tags
 *.DS_Store
 *.~
 *.o
