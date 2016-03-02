@@ -7,7 +7,6 @@ object HUMAN_DSL_NAMEBuild extends Build {
 
   val virtBuildSettingsBase = Project.defaultSettings ++ Seq(
     organization := "stanford-ppl",
-    scalaOrganization := "org.scala-lang" //.virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
     libraryDependencies += "org.scala-lang" % "scala-library" % virtScala, //.virtualized
@@ -23,7 +22,6 @@ object HUMAN_DSL_NAMEBuild extends Build {
     // used in delitec to access jars
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
-    // scalacOptions += "-Yvirtualize",
     initialCommands in console += "import LOWERCASE_DSL_NAME.library._; val HUMAN_DSL_NAME = new HUMAN_DSL_NAMEREPL { def main() = {} }; import HUMAN_DSL_NAME._"
 
     val paradiseVersion = "2.0.1"

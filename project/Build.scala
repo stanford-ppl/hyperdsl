@@ -12,7 +12,6 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
   val scalaTest = "org.scalatest" % "scalatest_2.11" % "2.2.2"
   val virtBuildSettingsBase = Defaults.defaultSettings ++ Seq(
     organization := "stanford-ppl",
-    //scalaOrganization := "org.scala-lang.virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
     libraryDependencies += "org.scala-lang" % "scala-library" % virtScala,
@@ -31,7 +30,6 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
-    //scalacOptions += "-Yvirtualize",
 
     //we need tests to run in isolation across all projects
     parallelExecution in Test := false,
