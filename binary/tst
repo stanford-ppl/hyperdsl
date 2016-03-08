@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd $HYPER_HOME/published/DHDL
+
+argsArray=( "$@" )
+sbtArgs=${argsArray[@]:0:$#}
+
+echo "bin/delitec ${1}TestCompiler $sbtArgs"
+bin/delitec ${1}TestCompiler 2>&1 | tee compile.log
+
+bin/delite ${1}TestCompiler 2>&1 | tee run.log
