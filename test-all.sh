@@ -16,7 +16,7 @@ dsls=(
 runners=(
     "ppl.dsl.forge.examples.SimpleIntVectorDSLRunner"
     "ppl.dsl.forge.examples.SimpleVectorDSLRunner"
-    "ppl.dsl.forge.dsls.optiml.OsptiMLDSLRunner"
+    "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner"
     "ppl.dsl.forge.dsls.optiql.OptiQLDSLRunner"
     "ppl.dsl.forge.dsls.optigraph.OptiGraphDSLRunner"
     "ppl.dsl.forge.dsls.optiwrangler.OptiWranglerDSLRunner"
