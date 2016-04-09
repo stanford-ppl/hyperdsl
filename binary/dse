@@ -8,7 +8,6 @@
  cp $FORGE_HOME/apps/DHDL/src/* apps/src/
  sbt compile
 
+## TODO: Enable DSE here
  echo "bin/delitec ${1}Compiler $sbtArgs"		
- bin/delitec ${1}Compiler 2>&1 | tee compile.log		
- 		
- bin/delite ${1}Compiler 2>&1 | tee run.log
+ bin/delitec ${1}Compiler 2>&1 | tee compile.log
