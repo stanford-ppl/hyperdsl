@@ -7,7 +7,7 @@ import matplotlib.ticker as ticker
 import os, sys
 import math
 
-benchmarks = ['DotProduct', 'GDA']
+benchmarks = ['DotProduct', 'TPCHQ6']
 #['BlackScholes', 'DotProduct', 'GDA', 'Kmeans', 'GEMM', 'OutProd', 'TPCHQ6']
 labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 plotInvalid = True
@@ -41,7 +41,7 @@ for (idx, bm) in enumerate(benchmarks):
 
   ALMS = 0
   for i in range(0, len(header)):
-    if 'ALMs' in header[i]: ALMS = i
+    if 'ALMS' in header[i]: ALMS = i
 
   REGS = ALMS + 1
   DSPS = ALMS + 2
@@ -72,7 +72,6 @@ for (idx, bm) in enumerate(benchmarks):
     brmSets[g].append(brm)
     cycSets[g].append(cyc)
 
-  N = len(vlid)
 
   #### Start plotting
   rowIdx = idx%numRows
