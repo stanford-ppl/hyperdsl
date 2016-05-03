@@ -70,7 +70,8 @@ config_file_warn() {
 }
 check_config_file() {
     if [ ! -f "${DELITE_HOME}/config/delite/$1" ]; then
-      default="$1.linux";
+      os=`uname | tr 'A-Z' 'a-z'`
+      default="$1.$os";
       if [ ! -f "${DELITE_HOME}/config/delite/$default" ]; then
         config_file_error $1;
       else
