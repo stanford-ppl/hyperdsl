@@ -27,20 +27,57 @@ runners=(
 
 E_BADENV=65
 
+# default environment variables
+DEFAULT_HYPER_HOME=.
+DEFAULT_LMS_HOME=virtualization-lms-core
+DEFAULT_DELITE_HOME=delite
+DEFAULT_FORGE_HOME=forge
+
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 echoerr() { echo -e "[${RED}error${NC}]: $@" 1>&2; } # 1>&2 redirects stdout to stderr. -e enables escape sequences (to read color)
+echowarn() { echo -e "[${YELLOW}warning${NC}]: $@" 1>&2; } # non fatal errors
 echoinfo() { echo "[test-all]: $@"; } # test-all info
 env_var_error() {
     echoerr "$1 environment variable is not defined. Please set it to the appropriate project root directory or run 'source init-env.sh'";
     exit $E_BADENV;
 }
+env_var_warning() {
+    echowarn "$1 environment variable is not defined."
+    echowarn "Using default: $2";
+}
+check_env_var() {
+  VARNAME="$1"
+  if [ -z $(eval echo "\$$VARNAME") ]; then
+    if [ -z $(eval echo "\$DEFAULT_$VARNAME") ]; then
+      env_var_error $VARNAME
+    else
+      default=$(eval echo "\$DEFAULT_$VARNAME");
+      default=$(realpath $default);
+      env_var_warning "$VARNAME" "$default";
+      export "$VARNAME"="$default";
+    fi
+   fi
+}
 config_file_error() {
     echoerr "$1 is not present. Check ${DELITE_HOME}/config/delite/ for a configuration for your platform";
     exit $E_BADENV;
 }
+config_file_warn() {
+  echowarn "$1 is not present.";
+  echowarn "Creating from: $2";
+}
 check_config_file() {
-    if [ ! -f "${DELITE_HOME}/config/delite/$1" ]; then config_file_error $1; fi
+    if [ ! -f "${DELITE_HOME}/config/delite/$1" ]; then
+      default="$1.linux";
+      if [ ! -f "${DELITE_HOME}/config/delite/$default" ]; then
+        config_file_error $1;
+      else
+        config_file_warn $1 $default;
+        cp "${DELITE_HOME}/config/delite/$default" "${DELITE_HOME}/config/delite/$1";
+      fi
+    fi
 }
 listcontains() {
   for elem in $1; do
@@ -50,10 +87,10 @@ listcontains() {
 }
 
 # check for required env variables
-if [ -z "${HYPER_HOME}" ]; then env_var_error HYPER_HOME; fi
-if [ -z "${LMS_HOME}" ]; then env_var_error LMS_HOME; fi
-if [ -z "${DELITE_HOME}" ]; then env_var_error DELITE_HOME; fi
-if [ -z "${FORGE_HOME}" ]; then env_var_error FORGE_HOME; fi
+check_env_var HYPER_HOME;
+check_env_var LMS_HOME;
+check_env_var DELITE_HOME;
+check_env_var FORGE_HOME;
 
 # check for required configuration files
 check_config_file CPP.xml
