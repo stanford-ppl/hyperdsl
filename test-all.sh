@@ -5,11 +5,11 @@
 # Used by Jenkins to verify commits.
 
 # add new DSLs to test here
-dsls=( "SimpleVector" "OptiML" "OptiQL" "OptiGraph" "OptiWrangler" )
-runners=( "ppl.dsl.forge.examples.SimpleVectorDSLRunner" "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" "ppl.dsl.forge.dsls.optiql.OptiQLDSLRunner" "ppl.dsl.forge.dsls.optigraph.OptiGraphDSLRunner" "ppl.dsl.forge.dsls.optiwrangler.OptiWranglerDSLRunner" )
+dsls=( "SimpleIntVector" "SimpleVector" "OptiML" "OptiQL" "OptiGraph" "OptiWrangler" )
+runners=( "ppl.dsl.forge.examples.SimpleIntVectorDSLRunner" "ppl.dsl.forge.examples.SimpleVectorDSLRunner" "ppl.dsl.forge.dsls.optiml.OptiMLDSLRunner" "ppl.dsl.forge.dsls.optiql.OptiQLDSLRunner" "ppl.dsl.forge.dsls.optigraph.OptiGraphDSLRunner" "ppl.dsl.forge.dsls.optiwrangler.OptiWranglerDSLRunner" )
 
 # exit if any part of the script fails
-if [ "$1" != "--no-benchmarks" ]; then set -e; fi
+#set -e
 
 E_BADENV=65
 
