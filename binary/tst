@@ -1,14 +1,13 @@
 #!/bin/bash		
- 		
- cd $HYPER_HOME/published/DHDL		
- 		
- argsArray=( "$@" )		
- sbtArgs=${argsArray[@]:1:$#}		
- 
- cp $FORGE_HOME/apps/DHDL/src/* apps/src/
- sbt compile
+	
+cd $HYPER_HOME/published/DHDL		
+	
+argsArray=( "$@" )		
+sbtArgs=${argsArray[@]:1:$#}		
 
- echo "bin/delitec ${1}Compiler"		
- bin/delitec --noDSE ${1}Compiler 2>&1 | tee compile.log		
- 		 
- bin/delite ${1}Compiler $sbtArgs 2>&1 | tee run.log
+cp $FORGE_HOME/apps/DHDL/src/* apps/src/
+sbt compile
+
+echo "bin/delitec ${1}Compiler"		
+bin/delitec --noDSE ${1}Compiler 2>&1 | tee compile.log				
+bin/delite ${1}Compiler $sbtArgs 2>&1 | tee run.log

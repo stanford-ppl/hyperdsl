@@ -7,8 +7,7 @@ import matplotlib.ticker as ticker
 import os, sys
 import math
 
-benchmarks = ['DotProduct', 'TPCHQ6']
-#['BlackScholes', 'DotProduct', 'GDA', 'Kmeans', 'GEMM', 'OutProd', 'TPCHQ6']
+benchmarks = ['DotProduct', 'OuterProduct', 'GEMM', 'TPCHQ6', 'BlackScholes', 'GDA', 'Kmeans']
 labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 plotInvalid = True
 
@@ -57,10 +56,12 @@ for (idx, bm) in enumerate(benchmarks):
   cycSets = [[],[],[],[]]
 
   for i in range(1,len(lines)-1):
+    maxBRAM = 2567
+    if idx == 2: maxBRAM = 1860
     ln = lines[i].split(',')
     alm = 100 * float(ln[ALMS].rstrip()) / 262400
     dsp = 100 * float(ln[DSPS].rstrip()) / 1963
-    brm = 100 * float(ln[BRAM].rstrip()) / 2567
+    brm = 100 * float(ln[BRAM].rstrip()) / maxBRAM
     cyc = math.log10(float(ln[CYCL].rstrip()))
 
     g = 0
@@ -152,15 +153,15 @@ for (idx, bm) in enumerate(benchmarks):
       va='center', weight='bold')
 
   if (rowIdx==0):
-    ax3.legend([iv, v, p, s], ['Invalid design using more than 100% resources',
+    ax3.legend([iv, v, p, s], ['Invalid design',
     'Valid design',
       'Pareto point',
       'Synthesized design'],
-        bbox_to_anchor=(1.0, 1.6), ncol=2, fontsize=font_size-1)
+        bbox_to_anchor=(1.0, 1.6), ncol=2, fontsize=font_size+1)
 
 fig.text(0.5, 0.04, 'Usage (% of maximum)', ha='center')
 fig.text(0.04, 0.5, 'Cycles (Log Scale)', va='center', rotation='vertical')
 fig.set_size_inches(7,9)
-plt.savefig('tradeoff.png', format='png', dpi=900)
+plt.savefig('tradeoff.pdf', format='pdf', dpi=900)
 
 
