@@ -10,5 +10,5 @@
 
  echo "bin/delitec ${1}Compiler"		
  bin/delitec --noDSE ${1}Compiler 2>&1 | tee compile.log		
- 		
-# bin/delite ${1}Compiler $sbtArgs 2>&1 | tee run.log
+ 		 
+ bin/delite ${1}Compiler $sbtArgs 2>&1 | tee run.log
