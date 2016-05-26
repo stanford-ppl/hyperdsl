@@ -1,0 +1,15 @@
+#!/bin/bash
+
+FILEPATH="generated/${1}Compiler"
+FILENAME="${1}Compiler${2}"
+
+# Move define macro to beginning of the file
+cd $HYPER_HOME/published/DHDL
+cp ${FILEPATH}/${FILENAME}.dot ${FILEPATH}/${FILENAME}_pre.m4
+grep 'define' ${FILEPATH}/${FILENAME}_pre.m4 >${FILEPATH}/${FILENAME}.m4
+grep -v '^define' ${FILEPATH}/${FILENAME}_pre.m4 >> ${FILEPATH}/${FILENAME}.m4
+# Generate dot file
+m4 ${FILEPATH}/${FILENAME}.m4 > ${FILEPATH}/${FILENAME}_final.dot
+# Generate dot graph
+dot -Tpdf ${FILEPATH}/${FILENAME}_final.dot > ${FILENAME}.pdf
+open ${FILENAME}.pdf
