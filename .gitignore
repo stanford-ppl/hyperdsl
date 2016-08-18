@@ -26,3 +26,5 @@ test-out/*/*-log
 test-out/*/*-skel
 test-out/*/*-src
 profiler/less
+*.sublime-project
+*.sublime-workspace
