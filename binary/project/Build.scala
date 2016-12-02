@@ -3,16 +3,15 @@ import sbt._
 import Keys._
 
 object HUMAN_DSL_NAMEBuild extends Build {
-  val virtScala = "2.10.2"
+  val virtScala = "2.11.2"
 
   val virtBuildSettingsBase = Project.defaultSettings ++ Seq(
     organization := "stanford-ppl",
-    scalaOrganization := "org.scala-lang.virtualized",
     scalaVersion := virtScala,
     publishArtifact in (Compile, packageDoc) := false,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-library" % virtScala,
-    libraryDependencies += "org.scala-lang.virtualized" % "scala-compiler" % virtScala,
-    libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.2",
+    libraryDependencies += "org.scala-lang" % "scala-library" % virtScala, //.virtualized
+    libraryDependencies += "org.scala-lang" % "scala-compiler" % virtScala, //.virtualized
+    libraryDependencies += "org.scalatest" % "scalatest" % "2.1.2",
     
     libraryDependencies += "org.apache.commons" % "commons-math" % "2.2",
     resolvers += "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
@@ -23,8 +22,18 @@ object HUMAN_DSL_NAMEBuild extends Build {
     // used in delitec to access jars
     retrieveManaged := true,
     scalacOptions += "-Yno-generic-signatures",
-    scalacOptions += "-Yvirtualize",
     initialCommands in console += "import LOWERCASE_DSL_NAME.library._; val HUMAN_DSL_NAME = new HUMAN_DSL_NAMEREPL { def main() = {} }; import HUMAN_DSL_NAME._"
+
+    val paradiseVersion = "2.0.1"
+
+    libraryDependencies ++= (
+      if (scalaVersion.value.startsWith("2.10")) List("org.scalamacros" %% "quasiquotes" % paradiseVersion)
+      else Nil
+    )
+
+    // libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile"
+    
+    addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full)
   )
 
   val virtBuildSettings = virtBuildSettingsBase ++ Seq(

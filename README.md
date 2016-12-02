@@ -15,7 +15,8 @@ Installation
 
     cd hyperdsl
     git submodule update --init
-    sbt compile
+    source init-env.sh # set the environment variables in the current shell
+    sbt compile # compiles the hyperdsl project
 
 Updating Existing Repo to Latest Commits
 ============
