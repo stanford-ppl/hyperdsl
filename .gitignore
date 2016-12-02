@@ -6,6 +6,8 @@
 *.DS_Store
 *.~
 *.o
+*.sublime-project
+*.sublime-workspace
 /local.properties
 target/
 *lib_managed
