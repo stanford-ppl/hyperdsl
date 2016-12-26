@@ -40,7 +40,8 @@ object HyperDSLBuild extends Build with ForgePreprocessor {
 
   val deliteBuildSettings = virtBuildSettingsBase ++ Seq(
     scalaSource in Compile <<= baseDirectory(_ / "src"),
-    scalaSource in Test <<= baseDirectory(_ / "tests")
+    scalaSource in Test <<= baseDirectory(_ / "tests"),
+    excludeFilter in unmanagedSources := "*templates*"
   )
 
   val forgeBuildSettings = virtBuildSettingsBase ++ Seq(
